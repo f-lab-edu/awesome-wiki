@@ -1,0 +1,13 @@
+apply plugin: "java"
+
+sourceCompatibility = version_target_jvm
+targetCompatibility = version_target_jvm
+[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+
+dependencies {
+    // JSR 330: Dependency Injection for Java
+    implementation "javax.inject:javax.inject:1"
+
+    // JSR 305: Annotations for Software Defect Detection
+    implementation "com.google.code.findbugs:jsr305:3.0.2"
+}

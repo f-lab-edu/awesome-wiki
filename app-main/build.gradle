@@ -1,0 +1,32 @@
+apply plugin: "application"
+
+apply from: "$project.rootDir/buildScripts/java.gradle"
+apply from: "$project.rootDir/buildScripts/kotlin.gradle"
+apply from: "$project.rootDir/buildScripts/testing.gradle"
+apply from: "$project.rootDir/buildScripts/packaging.gradle"
+
+application {
+    mainClassName = 'MainKt'
+}
+
+sourceSets {
+    def buildConfig = getBuildConfig()
+
+    main {
+        java {
+            srcDirs srcDirs = [srcDirs, "src/$buildConfig/java", "src/$buildConfig/kotlin"]
+        }
+
+        resources {
+            srcDirs srcDirs = [srcDirs, "src/$buildConfig/resources"]
+        }
+    }
+}
+
+dependencies {
+    implementation project(":app-core")
+    implementation project(":app-lib")
+
+    testImplementation project(path: ":app-core", configuration: "testArtifacts")
+    testImplementation project(path: ":app-lib", configuration: "testArtifacts")
+}

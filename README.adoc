@@ -1,0 +1,22 @@
+= awesome-wiki
+"kmmin78
+" <kmmin78@gmail.com>, "Chen Steve" <neropsys@gmail.com>, "Francesco Jo" <nimbusob@gmail.com>
+// Metadata:
+:description: Wiki 프로젝트
+:keywords: spring-boot, jpa-hibernate, junit5, spock-groovy, spring-rest-docs, tdd, kotlin, gradle
+// Settings:
+:doctype: book
+:toc: left
+:toclevels: 4
+:sectlinks:
+:icons: font
+// Refs:
+:link-todo-sheets: https://docs.google.com/spreadsheets/d/1xWtMZ2Ng69OcFMIkfMSQvYUPtqB-fzVKMoopEGIuOIA
+:link-todo-issues: https://github.com/f-lab-edu/awesome-wiki/issues
+
+[[overview]]
+== 개요
+
+Spring framework 를 이용한 다중 접속 애플리케이션에서 발생하는 어려움을 해결하며 공부하기 위한 프로젝트입니다.
+
+최대한 효율적으로 TDD 를 연습하기 위해 link:{link-todo-sheets}[할 일 목록 Google sheets] 와 link:{link-todo-issues}[Issue Kanban board] 를 적극 활용하고 있습니다.

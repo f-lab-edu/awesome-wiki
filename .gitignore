@@ -1,0 +1,23 @@
+# Compiled class file
+*.class
+
+# IntelliJ IDEA
+.idea/
+
+# Gradle
+.gradle/
+
+# Build outputs
+build/
+target/
+out/
+bin/
+
+# Log file
+*.log
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# Prevent configuration files are checked into SCM
+application.yml

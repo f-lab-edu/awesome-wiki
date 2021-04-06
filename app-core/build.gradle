@@ -1,0 +1,9 @@
+apply from: "$project.rootDir/buildScripts/java.gradle"
+apply from: "$project.rootDir/buildScripts/kotlin.gradle"
+apply from: "$project.rootDir/buildScripts/testing.gradle"
+
+dependencies {
+    implementation project(":app-lib")
+
+    testImplementation project(path: ":app-lib", configuration: "testArtifacts")
+}
