@@ -5,5 +5,6 @@ class WikiApplication {
         println("Hello World! Current app profile is: ${AppConfig.PROFILE}")
         println("test")
         println("test2")
+        println("test3")
     }
 }
