@@ -25,6 +25,8 @@ detekt {
     // The directories where detekt looks for source files.
     // Defaults to `files("src/main/java", "src/main/kotlin")`.
     input = files(
+            "src/main/java",
+            "src/main/kotlin",
             "src/$buildConfig/java",
             "src/$buildConfig/kotlin"
     )
