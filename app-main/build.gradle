@@ -6,7 +6,7 @@ apply from: "$project.rootDir/buildScripts/testing.gradle"
 apply from: "$project.rootDir/buildScripts/packaging.gradle"
 
 application {
-    mainClassName = 'MainKt'
+    mainClassName = 'kr.flab.wiki.app.MainKt'
 }
 
 sourceSets {
@@ -29,4 +29,16 @@ dependencies {
 
     testImplementation project(path: ":app-core", configuration: "testArtifacts")
     testImplementation project(path: ":app-lib", configuration: "testArtifacts")
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "kr.flab.wiki.app.MainKt"
+    }
+
+    from {
+        configurations.compileClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 }
