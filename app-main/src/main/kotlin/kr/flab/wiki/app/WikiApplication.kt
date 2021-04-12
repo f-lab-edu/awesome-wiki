@@ -4,6 +4,7 @@ import kr.flab.wiki.text.isNullOrUnicodeBlank
 
 class WikiApplication {
     fun start(args: List<String>) {
+        println(args)
 
         println("Hello World! Current app profile is: ${AppConfig.PROFILE}")
         println("test : ${"test".isNullOrUnicodeBlank()}")
