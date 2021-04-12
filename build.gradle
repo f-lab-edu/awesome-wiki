@@ -1,8 +1,10 @@
+
 buildscript {
+
     ext {
         version_target_jvm = 13
         version_kotlin = "1.4.32"
-
+        version_detekt = "1.16.0"
         version_junit5 = "5.6.0"
     }
 
@@ -14,6 +16,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$version_kotlin"
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$version_detekt"
     }
 }
 
