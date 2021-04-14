@@ -49,5 +49,6 @@ task versioning {
 
     if(buildConfig == "release"){
         ("git tag ${project.version.toString()}").execute()
+        ("git push --tags").execute()
     }
 }
