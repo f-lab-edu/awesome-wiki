@@ -11,6 +11,6 @@ class WikiApplication {
         println("test2 : ${"test2".isNullOrUnicodeBlank()}")
         println("test3 : ${"test3".isNullOrUnicodeBlank()}")
         println("".isNullOrUnicodeBlank())
-
+        println("End.")
     }
 }
