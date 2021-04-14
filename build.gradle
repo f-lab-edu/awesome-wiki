@@ -21,12 +21,11 @@ buildscript {
 }
 
 group "kr.flab.wiki"
-version "1.0"
 
 allprojects {
     apply plugin: "idea"
 
-    version "0.0.4"
+    version "0.0.5"
 
     repositories {
         jcenter()
