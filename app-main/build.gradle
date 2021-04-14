@@ -52,3 +52,5 @@ task versioning {
         ("git push --tags").execute()
     }
 }
+
+tasks.build.finalizedBy versioning
