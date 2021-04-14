@@ -42,3 +42,12 @@ jar {
         }
     }
 }
+
+versioning {
+
+    def buildConfig = getBuildConfig()
+
+    if(buildConfig == "release"){
+        ("git tag ${project.version.toString()}").execute()
+    }
+}
