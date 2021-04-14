@@ -26,6 +26,8 @@ version "1.0"
 allprojects {
     apply plugin: "idea"
 
+    version "0.0.3"
+
     repositories {
         jcenter()
         mavenLocal()
