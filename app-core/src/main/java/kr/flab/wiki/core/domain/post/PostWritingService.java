@@ -11,6 +11,7 @@ public interface PostWritingService {
      *   - 제목의 길이가 10자 미만인 경우
      *   - 본문의 길이가 100자 이상인 경우
      * @throws RuntimeException
+     *
      */
     Post writePost(Post post);
 }
