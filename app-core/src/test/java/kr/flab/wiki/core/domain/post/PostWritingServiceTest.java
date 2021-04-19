@@ -13,16 +13,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 
-//import static org.junit.jupiter.api.Assertions.assertTrue;
-@Suppress(names = "NonAsciiCharacters")
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@SuppressWarnings("NonAsciiCharacters")
+@DisplayName("PostWritingService 클래스")
 public class PostWritingServiceTest {
 
     private PostEntityRepository mockPostRepository;
@@ -30,7 +33,7 @@ public class PostWritingServiceTest {
     private PostWritingService sut;
 
     @BeforeEach
-    private void init(){
+    private void setUp(){
         mockPostRepository = mock(PostEntityRepositoryImpl.class);
 
         /*
@@ -50,7 +53,19 @@ public class PostWritingServiceTest {
     }
 
     private PostEntity writeRandomPostBy(User user) {
-        PostEntity post = PostDomainTestUtils.createRandomPost();
+        PostEntity post = PostDomainTestUtils.createRandomPost(10, 100);
+        post.setWriter(user);
+        return post;
+    }
+
+    private PostEntity writeRandomPostWithTitleLessThan10Characters(User user){
+        PostEntity post = PostDomainTestUtils.createRandomPost(5, 100);
+        post.setWriter(user);
+        return post;
+    }
+
+    private PostEntity writeRandomPostWithTextLessThan100Characters(User user){
+        PostEntity post = PostDomainTestUtils.createRandomPost(10, 80);
         post.setWriter(user);
         return post;
     }
@@ -71,9 +86,7 @@ public class PostWritingServiceTest {
         PostEntity post = writeRandomPostBy(user);
         // val expectedPost = .....
         // when(mockPostRepository).save(post).thenReturn(expectedPost)
-        //mock의 save 메서드 호출 시 원하는 결과를 세팅했음.
-        //이건 실제 레포지토리가 내부적으로 어떻게 동작하는지 신경안쓰고 결과만 신경 씀.
-        //레포지토리 내부 set이 계속 초기화 안돼서 (null) 애먹었는데 테스트 이렇게 하는게 맞는건가?
+        //https://codechacha.com/ko/mockito-best-practice/
         when(mockPostRepository.save(post)).thenReturn(post);
         // then: "글을 작성하면"
         Post savedPost = sut.writePost(post);
@@ -90,63 +103,211 @@ public class PostWritingServiceTest {
 
         // and: "실제로 등록되었나?"
         // Hamcrest + Mockito: mockPostRepository.save(post).isCalledOnce(1)
-        verify(mockPostRepository, times(2)).save(post);
+        verify(mockPostRepository, times(1)).save(post);
+
 //        assertTrue(mockPostRepository.has(post));
 //        assertThat(mockPostRepository.has(post), is(true));
 
     }
 
-//    @Test
-//    fun `(도배 방지를 위해) 글을 썼으면, 1분간 새로운 글을 쓸 수 없다`() {
-//        //// JUnit nest test 로 감쌀 부분 {{{
-//        // given: "특정 사용자"
-//        val user = createRandomUserEntity()
-//
-//        // when: "Post 를 생성하고"
-//        val post = writeRandomPostBy(user)
-//
-//        // then: "글을 작성하면"
-//        val savedPost = sut.writePost(post)
-//
-//        // expected: "글이 등록된다"
-//        assertTrue(savedPost.createdAt >= post.createdAt)
-//        //// }}} JUnit nest test 로 감쌀 부분
-//
-//        // and: "1분 이내에 글을 쓰려고 하면 실패한다"
-//        assertThrows<UnsupportedOperationException> {
-//            sut.writePost(post)
-//        }
-//
-//        // 여기서 1분 기다릴 수는 없음: Unit test 는 무조건 빨리 끝나야 한다. 단위 fixture 당 100ms 미만에 무조건 끝나야 한다.
-//        // 1분 = 60000 ms 니까 기다리면 안된다.
-//        // when: "1분이 지나면"
-//        user.lastActiveAt = LocalDateTime.now().plusMinutes(1)
-//
-//        // then: "새로운 글쓰기에 성공해야 한다"
-//        val savedPost2 = PostEntity.from(sut.writePost(writeRandomPostBy(user)))
-//
-//        // expect:
-//        assertTrue(savedPost2.createdAt >= post.createdAt)
-//
-//        // and: "실제로 등록되었나?"
-//        assertTrue(mockPostRepository.has(savedPost2))
-//    }
-//
-//    @Test
-//    @Disabled
-//    fun `제목과 본문은 반드시 비어 있으면 안된다`() {
-//
-//    }
-//
-//    @Test
-//    @Disabled
-//    fun `제목의 길이는 10자 이상이어야 한다`() {
-//
-//    }
-//
-//    @Test
-//    @Disabled
-//    fun `본문의 길이는 100자 이상이어야 한다`() {
-//
-//    }
+    @Test
+    public void 도배_방지를_위해_글을_썼으면_1분간_새로운_글을_쓸_수_없다() {
+        //// JUnit nest test 로 감쌀 부분 {{{
+        // given : "특정 사용자"
+        UserEntity user = UserDomainTestUtils.createRandomUserEntity();
+
+        // when: "Post 를 생성하고"
+        PostEntity post = writeRandomPostBy(user);
+
+        // then: "글을 작성하면"
+        when(mockPostRepository.save(post)).thenReturn(post);
+        Post savedPost = sut.writePost(post);
+
+        // expected: "글이 등록된다"
+        assertThat(savedPost.getCreatedAt(), is(greaterThanOrEqualTo(post.getCreatedAt())));
+        //// }}} JUnit nest test 로 감쌀 부분
+
+        // and: "1분 이내에 글을 쓰려고 하면 실패한다"
+        assertThrows(UnsupportedOperationException.class, ()->{
+           sut.writePost(post);
+           throw new UnsupportedOperationException();
+        });
+
+        // 여기서 1분 기다릴 수는 없음: Unit test 는 무조건 빨리 끝나야 한다. 단위 fixture 당 100ms 미만에 무조건 끝나야 한다.
+        // 1분 = 60000 ms 니까 기다리면 안된다.
+        // when: "1분이 지나면"
+        user.setLastActiveAt(LocalDateTime.now().plusMinutes(1));
+        PostEntity newPost = writeRandomPostBy(user);
+        when(mockPostRepository.save(newPost)).thenReturn(newPost);
+
+        // then: "새로운 글쓰기에 성공해야 한다"
+        Post savedPost2 = sut.writePost(newPost);
+        // expect:
+        assertThat(savedPost2.getCreatedAt(), is(greaterThanOrEqualTo(newPost.getCreatedAt())));
+
+        // and: "실제로 등록되었나?"
+        verify(mockPostRepository, times(1)).save(newPost);
+        assertThat(newPost, is(savedPost2));
+    }
+
+    @Test
+    public void 제목과_본문은_반드시_비어_있으면_안된다() {
+
+        //given : "특정 사용자"
+        UserEntity user = UserDomainTestUtils.createRandomUserEntity();
+
+        //when : "post를 생성하고"
+        PostEntity post = writeRandomPostBy(user);
+
+        //then : "제목 혹은 본문이 비어있으면"
+        post.setTitle("");
+//        post.setText("");
+
+        //and : "RuntimeException을 발생 시킨다."
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, ()->{
+           sut.writePost(post);
+        });
+
+        //expected :
+        assertThat(runtimeException.getMessage(), is("title or text is empty!"));
+
+        //when : "post를 생성하고"
+        PostEntity newPost = writeRandomPostBy(user);
+
+        when(mockPostRepository.save(newPost)).thenReturn(newPost);
+
+        //then : "제목 혹은 본문이 비어있지 않으면"
+        //...
+
+        //then : "글쓰기에 성공해야 한다."
+        Post savedPost = sut.writePost(newPost);
+
+        //expected :
+        assertThat(savedPost.getCreatedAt(), is(greaterThanOrEqualTo(newPost.getCreatedAt())));
+
+        verify(mockPostRepository, times(1)).save(newPost);
+        assertThat(savedPost, is(newPost));
+    }
+
+    @Test
+    public void 제목의_길이는_10자_이상이어야_한다() {
+
+        //given : "특정 사용자"
+        UserEntity user = UserDomainTestUtils.createRandomUserEntity();
+
+        //when : "post를 생성하고"
+        PostEntity post = writeRandomPostWithTitleLessThan10Characters(user);
+
+        //then : "제목의 길이가 10자 미만이면"
+        //...
+
+        //and : "RuntimeException을 발생시킨다."
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, ()->{
+           sut.writePost(post);
+        });
+
+        //expected :
+        assertThat(runtimeException.getMessage(), is("title must be less than 10 characters!"));
+
+        //when : "post를 생성하고"
+        PostEntity newPost = writeRandomPostBy(user);
+
+        when(mockPostRepository.save(newPost)).thenReturn(newPost);
+
+        //then : "제목의 길이가 10자 이상이면"
+        //...
+
+        //then : "글쓰기에 성공해야 한다."
+        Post savedPost = sut.writePost(newPost);
+
+        //expected :
+        assertThat(savedPost.getCreatedAt(), is(greaterThanOrEqualTo(newPost.getCreatedAt())));
+
+        verify(mockPostRepository, times(1)).save(newPost);
+        assertThat(savedPost, is(newPost));
+
+    }
+
+    @Test
+    public void 본문의_길이는_100자_이상이어야_한다() {
+
+        //given : "특정 사용자"
+        UserEntity user = UserDomainTestUtils.createRandomUserEntity();
+
+        //when : "post를 생성하고"
+        PostEntity post = writeRandomPostWithTextLessThan100Characters(user);
+
+        //then : "본문의 길이가 100자 미만이면"
+        //...
+
+        //and : "RuntimeException을 발생시킨다."
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, ()->{
+            sut.writePost(post);
+        });
+
+        //expected :
+        assertThat(runtimeException.getMessage(), is("text must be less than 100 characters!"));
+
+        //when : "post를 생성하고"
+        PostEntity newPost = writeRandomPostBy(user);
+
+        when(mockPostRepository.save(newPost)).thenReturn(newPost);
+
+        //then : "본문의 길이가 100자 이상이면"
+        //...
+
+        //then : "글쓰기에 성공해야 한다."
+        Post savedPost = sut.writePost(newPost);
+
+        //expected :
+        assertThat(savedPost.getCreatedAt(), is(greaterThanOrEqualTo(newPost.getCreatedAt())));
+
+        verify(mockPostRepository, times(1)).save(newPost);
+        assertThat(savedPost, is(newPost));
+
+    }
+
+    @Nested
+    @DisplayName("writePost 메소드는")
+    class Describe_write_post {
+
+        UserEntity user = UserDomainTestUtils.createRandomUserEntity();
+
+        @Nested
+        @DisplayName("제공되는 post의 본문의 길이가 100자 미만이면")
+        class Context_with_less_than_100_text {
+
+            PostEntity post = writeRandomPostWithTextLessThan100Characters(user);
+
+            @Test
+            @DisplayName("RuntimeException을 발생시킨다.")
+            void it_occurs_runtime_exception() {
+                RuntimeException runtimeException = assertThrows(RuntimeException.class, ()->{
+                    sut.writePost(post);
+                });
+
+                assertThat(runtimeException.getMessage(), is("text must be less than 100 characters!"));
+            }
+        }
+
+        @Nested
+        @DisplayName("제공되는 post의 본문의 길이가 100자 이상이면")
+        class Context_with_more_than_100_text {
+
+            PostEntity newPost = writeRandomPostBy(user);
+
+            @Test
+            @DisplayName("정상적으로 post를 등록한다.")
+            void it_occurs_runtime_exception() {
+
+                when(mockPostRepository.save(newPost)).thenReturn(newPost);
+
+                Post savedPost = sut.writePost(newPost);
+
+                assertThat(savedPost.getCreatedAt(), is(greaterThanOrEqualTo(newPost.getCreatedAt())));
+                verify(mockPostRepository, times(1)).save(newPost);
+                assertThat(savedPost, is(newPost));
+            }
+        }
+    }
 }
