@@ -6,6 +6,13 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:$version_junit5"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$version_junit5"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$version_junit5"
+
+    // javafaker
+    testImplementation group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
+    // Hamcrest
+    testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
+    // https://mvnrepository.com/artifact/org.mockito/mockito-core
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.8.0'
 }
 
 check.dependsOn test
