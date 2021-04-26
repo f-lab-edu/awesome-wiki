@@ -2,51 +2,25 @@ package kr.flab.wiki.core.login;
 
 import kr.flab.wiki.core.login.business.UserLoginService;
 import kr.flab.wiki.core.login.business.UserLoginServiceImpl;
+import kr.flab.wiki.core.login.exception.LoginException;
 import kr.flab.wiki.core.login.persistence.User;
+import kr.flab.wiki.core.login.persistence.UserEntity;
 import kr.flab.wiki.core.login.repository.SessionRepository;
 import kr.flab.wiki.core.login.repository.SessionRepositoryImpl;
 import kr.flab.wiki.core.login.repository.UserLoginRepository;
 import kr.flab.wiki.core.login.repository.UserLoginRepositoryImpl;
 import kr.flab.wiki.core.login.utils.UserTestUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayName("UserLoginServiceTest")
 public class UserLoginServiceTest {
-    /**
-     * 로그인 기능 테스트
-     *
-     * given : 로그인 하지 않은 사용자는
-     * when : 이메일/비밀번호 입력 후 로그인 버튼을 클릭했을 때
-     * and : 이메일/비밀번호가 일치하는 회원이 있으면
-     * expected/then : 세션에 유저 정보를 저장하고
-     * and : 로그인에 성공한다.
-     *
-     * given : 로그인 하지 않은 사용자는
-     * when : 이메일/비밀번호 입력 후 로그인 버튼을 클릭했을 때
-     * and : 이메일이 이메일 형식이 아니면
-     * expected/then : 로그인에 실패한다.
-     *
-     * given : 로그인 하지 않은 사용자는
-     * when : 이메일/비밀번호 입력 후 로그인 버튼을 클릭했을 때
-     * and : 이메일 혹은 비밀번호가 비어있으면
-     * expected/then : 로그인에 실패한다.
-     *
-     * given : 로그인 하지 않은 사용자는
-     * when : 이메일/비밀번호 입력 후 로그인 버튼을 클릭했을 때
-     * and : 이메일/비밀번호가 일치하는 회원이 없으면
-     * expected/then : 로그인에 실패한다.
-     *
-     *
-     *
-     */
 
     private UserLoginRepository mockUserLoginRepository;
     private SessionRepository mockSessionRepository;
@@ -68,14 +42,13 @@ public class UserLoginServiceTest {
         // random user creation
         User user = UserTestUtils.createRandomUserEntity();
 
-
         @Nested
         @DisplayName("이메일/비밀번호 입력 후 로그인 버튼을 클릭했을 때")
         class When_Click_Login_Button {
 
             @Nested
             @DisplayName("이메일/비밀번호가 일치하는 회원이 있으면")
-            class And_Email_Password_Correct {
+            class And_Email_Password_is_Correct {
 
                 //여기선 해당 이메일/비밀번호가 일치하는 정보가 데이터베이스에 있다고 가정한다.
 
@@ -101,29 +74,75 @@ public class UserLoginServiceTest {
 
             }
 
+            @Nested
+            @DisplayName("이메일/비밀번호가 일치하는 회원이 없으면")
+            class And_Email_Password_is_Not_Correct {
 
 
+                @Test
+                @DisplayName("로그인에 실패한다.")
+                void Then_Login_Failed() {
 
+                    when(mockUserLoginRepository.findByIdWithPassword(user)).thenReturn(false);
+
+                    when(mockSessionRepository.setAttribute("userName", user.getEmail())).thenReturn(user.getEmail());
+
+
+                    //로그인 실패 exception 발생
+                    LoginException loginException = assertThrows(LoginException.class, () -> sut.login(user));
+
+                    assertThat(loginException.getMessage(), is("There's No Matched Member!"));
+                    verify(mockSessionRepository, times(0)).setAttribute("userName", user.getEmail());
+
+                }
+
+
+            }
+
+            @Nested
+            @DisplayName("이메일 혹은 비밀번호가 비어있으면")
+            class And_Email_Or_Password_is_Blank {
+
+                User emailBlank = UserTestUtils.createRandomUserEntity(UserTestUtils.UserType.BLANK_EMAIL);
+                User passwordBlank = UserTestUtils.createRandomUserEntity(UserTestUtils.UserType.BLANK_PASSWORD);
+
+                @Test
+                @DisplayName("로그인에 실패한다.")
+                void Then_Login_Failed() {
+
+                    LoginException loginException = assertThrows(LoginException.class, ()-> sut.login(emailBlank));
+
+                    assertThat(loginException.getMessage(), is("Email is Empty!"));
+
+                    loginException = assertThrows(LoginException.class, ()-> sut.login(passwordBlank));
+
+                    assertThat(loginException.getMessage(), is("Password is Empty!"));
+
+                }
+
+
+            }
+
+            @Nested
+            @DisplayName("이메일 형식이 올바르지 않으면")
+            class And_Not_Correct_Email_Type {
+
+                @Test
+                @DisplayName("로그인에 실패한다.")
+                void Then_Login_Failed() {
+
+                    User notEmail = UserTestUtils.createRandomUserEntity(UserTestUtils.UserType.NOT_EMAIL);
+
+                    LoginException loginException = assertThrows(LoginException.class, ()-> sut.login(notEmail));
+
+                    assertThat(loginException.getMessage(), is("Not Email Type!"));
+
+                }
+
+            }
 
         }
 
     }
-
-
-//    @Nested
-//    @DisplayName("login 메서드는")
-//    class Describe_login {
-//
-//        @Nested
-//        @DisplayName("username과 password가 일치하면")
-//        class Context_with_username_password_correct {
-//
-//            @Test
-//            @DisplayName("로그인에 성공한다.")
-//            void it_login_success() {
-//
-//            }
-//        }
-//    }
 
 }
