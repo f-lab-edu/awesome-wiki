@@ -12,4 +12,26 @@ public class UserTestUtils {
                 faker.internet().password()
         );
     }
+
+    public static User createRandomUserEntity(UserType userType) {
+        Faker faker = StringRandomUtils.getFaker();
+        if(userType == UserType.BLANK_EMAIL){
+            return new UserEntity("", faker.internet().password());
+        }
+        if(userType == UserType.BLANK_PASSWORD){
+            return new UserEntity(faker.internet().emailAddress(), "");
+        }
+        if(userType == UserType.NOT_EMAIL){
+            return new UserEntity(faker.animal().name(), faker.internet().password());
+        }
+        return new UserEntity("", "");
+    }
+
+    public enum UserType {
+        BLANK_EMAIL,
+        BLANK_PASSWORD,
+        NOT_EMAIL
+    }
+
+
 }

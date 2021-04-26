@@ -5,7 +5,7 @@ import com.github.javafaker.Faker;
 import java.util.Locale;
 
 public class StringRandomUtils {
-    private static final Faker faker = new Faker(new Locale("ko"));
+    private static final Faker faker = new Faker(new Locale("en"));
     private StringRandomUtils(){}
     public static Faker getFaker(){
         return faker;
