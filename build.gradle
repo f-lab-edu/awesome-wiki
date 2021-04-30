@@ -17,12 +17,15 @@ buildscript {
     }
 }
 
+plugins{
+    id("io.gitlab.arturbosch.detekt") version "1.16.0"
+}
 group "kr.flab.wiki"
 version "1.0"
 
 allprojects {
     apply plugin: "idea"
-
+    apply from: "$rootDir/buildScripts/detekt.gradle"
     repositories {
         jcenter()
         mavenLocal()
