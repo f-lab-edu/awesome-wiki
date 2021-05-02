@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 
-@SuppressWarnings("NonAsciiCharacters") // 클래스 명에 한글을 사용하기 위함.
 @DisplayName("해당 테스트는 UserLoginService 메서드를 테스트하는 클래스이다.")
 class UserLoginServiceTest {
 
@@ -38,6 +37,7 @@ class UserLoginServiceTest {
     @DisplayName("로그인 하지 않은 사용자는")
     inner class GivenAnonymousUser {
 
+        // given
         private val user : User = createRandomUserEntity()
 
         @Nested
@@ -52,11 +52,14 @@ class UserLoginServiceTest {
                 @DisplayName("세션에 유저 정보를 저장하고 로그인에 성공한다.")
                 fun thenCreateSessionAndLoginSuccess() {
 
+                    // mocking
                     `when`(mockUserLoginRepository.findUserWithIdAndPassword(user.email, user.password)).thenReturn(user)
                     `when`(mockSessionRepository.setAttribute("userName", user.email)).thenReturn(user.email)
 
+                    // when
                     val loggedInUser : User? = sut.login(user)
 
+                    // expected/then
                     verify(mockSessionRepository, times(1)).setAttribute("userName", user.email)
                     assertThat(user.email, `is`(loggedInUser?.email))
 
@@ -72,59 +75,20 @@ class UserLoginServiceTest {
                 @DisplayName("로그인에 실패한다.")
                 fun thenLoginFailed() {
 
+                    // mocking
                     `when`(mockUserLoginRepository.findUserWithIdAndPassword(user.email, user.password)).thenReturn(null)
                     `when`(mockSessionRepository.setAttribute("userName", user.email)).thenReturn(user.email)
 
+                    // when
                     val loginException : UserValidationException = assertThrows(UserValidationException::class.java) { sut.login(user) }
 
+                    // expected/then
                     assertThat(loginException.message, `is`("There's No Matched Member!"))
                     verify(mockSessionRepository, times(0)).setAttribute("userName", user.email)
 
                 }
 
             }
-
-            @Nested
-            @DisplayName("이메일 혹은 비밀번호가 비어있으면")
-            inner class AndEmailOrPasswordIsBlank {
-
-                private val emailBlank : User = createRandomUserEntity(UserType.BLANK_EMAIL)
-                private val passwordBlank : User = createRandomUserEntity(UserType.BLANK_PASSWORD)
-
-                @Test
-                @DisplayName("로그인에 실패한다.")
-                fun thenLoginFailed() {
-
-                    var loginException : UserValidationException = assertThrows(UserValidationException::class.java) { sut.login(emailBlank) }
-
-                    assertThat(loginException.message, `is`("Email is Empty!"))
-
-                    loginException = assertThrows(UserValidationException::class.java) { sut.login(passwordBlank) }
-
-                    assertThat(loginException.message, `is`("Password is Empty!"))
-
-                }
-
-            }
-
-            @Nested
-            @DisplayName("이메일 형식이 올바르지 않으면")
-            inner class AndNotCorrectEmailType {
-
-                private val notEmail : User = createRandomUserEntity(UserType.NOT_EMAIL)
-
-                @Test
-                @DisplayName("로그인에 실패한다.")
-                fun thenLoginFailed() {
-
-                    val loginException : UserValidationException = assertThrows(UserValidationException::class.java) { sut.login(notEmail) }
-
-                    assertThat(loginException.message, `is`("Not Email Type!"))
-
-                }
-
-            }
-
 
         }
 
