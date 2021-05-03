@@ -1,32 +1,40 @@
 buildscript {
     ext {
+        // lang
         version_target_jvm = 13
         version_kotlin = "1.4.32"
+
+        // Testing & Code quality
+        version_junit5 = "5.7.1"
         version_detekt = "1.16.0"
-        version_junit5 = "5.6.0"
+        version_jacoco = "0.8.6"
+
+        // Automatic documentation
+        version_asciidoctor_gradle = "3.3.2"
     }
 
     repositories {
         jcenter()
         mavenCentral()
-        maven { url "https://repo.spring.io/plugins-release" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$version_kotlin"
+
+        // Testing & Code quality
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$version_detekt"
+        classpath "org.asciidoctor:asciidoctor-gradle-jvm:$version_asciidoctor_gradle"
     }
 }
 
-plugins{
-    id("io.gitlab.arturbosch.detekt") version "1.16.0"
-}
 group "kr.flab.wiki"
 version "1.0"
 
 allprojects {
     apply plugin: "idea"
     apply from: "$rootDir/buildScripts/detekt.gradle"
+
     repositories {
         jcenter()
         mavenLocal()

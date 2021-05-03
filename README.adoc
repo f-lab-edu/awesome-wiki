@@ -13,6 +13,7 @@
 // Refs:
 :link-todo-sheets: https://docs.google.com/spreadsheets/d/1xWtMZ2Ng69OcFMIkfMSQvYUPtqB-fzVKMoopEGIuOIA
 :link-todo-issues: https://github.com/f-lab-edu/awesome-wiki/issues
+:link-detekt: https://arturbosch.github.io/detekt/index.html
 
 [[overview]]
 == 개요
@@ -20,3 +21,23 @@
 Spring framework 를 이용한 다중 접속 애플리케이션에서 발생하는 어려움을 해결하며 공부하기 위한 프로젝트입니다.
 
 최대한 효율적으로 TDD 를 연습하기 위해 link:{link-todo-sheets}[할 일 목록 Google sheets] 와 link:{link-todo-issues}[Issue Kanban board] 를 적극 활용하고 있습니다.
+
+[[code-quality-measurement]]
+=== 코드 품질 측정
+
+서로 다른 코딩 규칙으로 인해 코드 리뷰에 스타일링 지적 같은 불필요한 시간 낭비가 발생하는 일을 줄이고자, link:{link-detekt}[detekt] 를 이용해 코딩 스타일과 사전 실수를 관리하고 있습니다.
+
+또한 자동화된 test 를 항상 실행해 코드를 안전하게 변경 및 통합하고자 노력했습니다.
+
+아래 gradle task 를 실행하면 이 프로젝트에서 코드 품질을 측정할 수 있습니다.
+
+[source,shell script]
+----
+./gradlew detekt test jacocoTestReport
+----
+
+각 Task 들의 설명은 다음과 같습니다.
+
+- `detekt`: link:{link-detekt}[detekt] 를 실행. Kotlin 정적 분석 실행.
+- `test`: 개별 모듈 내에 작성한 test 들을 실행.
+- `jacocoTestReport`: 테스트 실행 및 테스트의 코드 커버리지 측정.
