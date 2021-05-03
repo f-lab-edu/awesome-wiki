@@ -11,7 +11,7 @@ class UserLoginServiceImpl(
     private val sessionRepository: SessionRepository
 ) : UserLoginService {
     override fun login(user: User): User? {
-        if (userLoginRepository.findByIdWithPassword(user)) {
+        if (userLoginRepository.findByIdWithPassword(user) != null) {
             sessionRepository.setAttribute(username = user.email, key = randomUUID())
             return user
         }
