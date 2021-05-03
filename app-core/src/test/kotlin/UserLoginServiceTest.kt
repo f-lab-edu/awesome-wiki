@@ -18,6 +18,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.*
 import java.util.*
 
+//테스트함수 표기에 한글 사용
 @Suppress("NonAsciiCharacters")
 class UserLoginServiceTest {
     lateinit var mockLoginRepository : UserLoginRepository
