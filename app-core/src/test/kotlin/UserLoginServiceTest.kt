@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
 import java.util.*
+import javax.annotation.Nonnull
 
 //테스트함수 표기에 한글 사용
 @Suppress("NonAsciiCharacters")
@@ -61,6 +62,7 @@ class UserLoginServiceTest {
     @Test
     fun `랜덤 유저가 등록 후 로그인 시도할 경우 세션정보 저장 후 계정정보 리턴`() {
         `when`(mockLoginRepository.save(user)).thenReturn(user)
+        `when`(mockLoginRepository.findByIdWithPassword(user)).thenReturn(user)
         //login 실행시 생성된 세션 uid를 리턴해줘야 함
         `when`(mockSessionRepository.getKey(user.email)).thenReturn("nonNull")
         assertTrue(sut.register(user) == user)
