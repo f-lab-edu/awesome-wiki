@@ -4,4 +4,5 @@ import kr.flab.wiki.core.post.persistence.Post
 
 interface PostService {
     fun writePost(post : Post) : Boolean
+    fun getPosts() : List<Post>
 }

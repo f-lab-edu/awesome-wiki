@@ -21,4 +21,8 @@ class PostServiceImpl(private val postRepository : PostRepository) : PostService
         }
         return postRepository.save(post)
     }
+
+    override fun getPosts(): List<Post> {
+        return postRepository.getPosts()
+    }
 }
