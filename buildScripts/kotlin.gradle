@@ -12,7 +12,28 @@ compileTestKotlin {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation "org.jetbrains.kotlin:kotlin-reflect"
+    implementation "com.github.javafaker:javafaker:1.0.2"
+    testImplementation "org.mockito:mockito-core:3.+"
+    testImplementation 'org.hamcrest:hamcrest:2.2'
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 detekt {
 
@@ -30,5 +51,7 @@ detekt {
             "src/$buildConfig/java",
             "src/$buildConfig/kotlin"
     )
+
+    autoCorrect = true
 
 }

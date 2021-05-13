@@ -1,0 +1,20 @@
+apply plugin: 'io.gitlab.arturbosch.detekt'
+
+detekt {
+    toolVersion = "$version_detekt"
+    config = files("$project.rootDir/buildScripts/settings/detekt-config.yml")
+    reports {
+        xml {
+            enabled = true
+            destination = file("$buildDir/reports/detekt.xml")
+        }
+        html {
+            enabled = true
+            destination = file("$buildDir/reports/detekt.html")
+        }
+    }
+}
+
+dependencies {
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.16.0"
+}
