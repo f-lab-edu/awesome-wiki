@@ -3,7 +3,7 @@ package kr.flab.wiki.core.domain.post
 import kr.flab.wiki.core.domain.user.User
 import java.time.LocalDateTime
 
-class PostImpl constructor(
+data class PostImpl constructor(
     override val creator: User,
     override val title: String,
     override val mainText: String,
