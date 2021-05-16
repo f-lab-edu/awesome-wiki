@@ -27,4 +27,14 @@ class PostServiceImpl(private val postRepository: PostRepository) : PostService 
     override fun getPosts(): List<Post> {
         return postRepository.getPosts()
     }
+
+    override fun getPost(id: Long): Post? {
+        return postRepository.getPost(id)
+    }
+
+    override fun editPost(post: Post): Post? {
+        post.id++
+        post.version++
+        return postRepository.editPost(post)
+    }
 }

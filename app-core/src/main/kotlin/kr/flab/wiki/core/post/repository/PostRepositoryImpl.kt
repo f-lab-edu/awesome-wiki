@@ -15,4 +15,18 @@ class PostRepositoryImpl(private val database: PostDatabase) : PostRepository {
     override fun getPosts(): MutableList<Post> {
         return database.posts
     }
+
+    override fun getPost(id: Long): Post? {
+        return database.posts
+            .filter { post -> post.id == id }
+            .sortedWith { prev, next -> if (prev.version > next.version) -1 else 1 }
+            .firstOrNull { post -> post.id == id }
+    }
+
+    override fun editPost(post: Post): Post? {
+        if (save(post) != null) {
+            return post
+        }
+        return null
+    }
 }

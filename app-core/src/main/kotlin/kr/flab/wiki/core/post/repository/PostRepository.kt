@@ -6,4 +6,6 @@ interface PostRepository {
     fun save(post: Post): Post?
     fun isTitleAlreadyExists(title: String): Boolean
     fun getPosts(): List<Post>
+    fun getPost(id: Long): Post?
+    fun editPost(post: Post): Post?
 }
