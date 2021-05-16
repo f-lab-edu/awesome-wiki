@@ -1,5 +1,7 @@
 package kr.flab.wiki.core.post
 
+import kr.flab.wiki.core.domain.PostLengthPolicy
+import kr.flab.wiki.core.domain.PostLengthPolicyImpl
 import kr.flab.wiki.core.domain.PostService
 import kr.flab.wiki.core.domain.PostServiceImpl
 import kr.flab.wiki.core.domain.post.Post
@@ -18,13 +20,14 @@ import org.mockito.Mockito.mock
 @Suppress("NonAsciiCharacters")
 class PostServiceTest {
     lateinit var mockPostRepository: PostRepository
-
+    lateinit var mockPostLengthPolicy: PostLengthPolicy
     lateinit var sut: PostService
 
     @BeforeEach
     fun setup() {
         mockPostRepository = mock(PostRepository::class.java)
-        sut = PostServiceImpl(mockPostRepository)
+        mockPostLengthPolicy = PostLengthPolicyImpl(100, 10000)
+        sut = PostServiceImpl(mockPostRepository, mockPostLengthPolicy)
     }
 
     @Nested
