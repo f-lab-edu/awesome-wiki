@@ -2,14 +2,16 @@ package kr.flab.wiki.core.domain
 
 import kr.flab.wiki.core.domain.post.Post
 import kr.flab.wiki.core.domain.repository.PostRepository
-//변수를 저장하기 위한 config 파일 전 테스트단계를 위해 매직넘버 사용 
+//변수를 저장하기 위한 config 파일 전 테스트단계를 위해 매직넘버 사용
 @Suppress("MagicNumber")
 class PostServiceImpl(private val postRepository: PostRepository) : PostService {
     val maxTitleLength = 100
     val maxMainTextLength = 10000
     override fun create(post: Post): Boolean {
 
-        if (!validTitle(post) && !validMainText(post) && get(post.title) != null)
+        if (!validTitle(post) || !validMainText(post))
+            return false
+        if(get(post.title) != null)
             return false
 
         return postRepository.create(post)
