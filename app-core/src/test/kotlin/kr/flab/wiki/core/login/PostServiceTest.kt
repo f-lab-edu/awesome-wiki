@@ -115,6 +115,35 @@ class PostServiceTest {
 
         }
 
+        @Nested
+        @DisplayName("전체 Post 목록을 클릭하는 경우")
+        inner class `전체 Post 목록을 클릭하는 경우` {
+
+            @BeforeEach
+            fun mocking() {
+                `when`(mockPostRepository.getPosts())
+                    .thenReturn(
+                        mutableListOf(
+                            createRandomPostEntity(user),
+                            createRandomPostEntity(user)
+                        )
+                    )
+            }
+
+            @Test
+            @DisplayName("Post 리스트를 불러온다.")
+            fun `Post 리스트를 불러온다`() {
+                //when
+                val posts: List<Post> = sut.getPosts()
+
+                //then
+                verify(mockPostRepository, times(1)).getPosts()
+                assertThat(posts.size, `is`(2))
+
+            }
+
+        }
+
 
     }
 }

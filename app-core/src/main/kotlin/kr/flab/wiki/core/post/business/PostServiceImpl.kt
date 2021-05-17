@@ -23,4 +23,8 @@ class PostServiceImpl(private val postRepository: PostRepository) : PostService 
         private const val MAX_TITLE_LENGTH: Int = 100
         private const val MAX_TEXT_LENGTH: Int = 10000
     }
+
+    override fun getPosts(): List<Post> {
+        return postRepository.getPosts()
+    }
 }
