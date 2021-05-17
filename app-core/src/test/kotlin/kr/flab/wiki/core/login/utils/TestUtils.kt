@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 object TestUtils {
-    val faker : Faker = Faker(Locale.ENGLISH)
+    val faker: Faker = Faker(Locale.ENGLISH)
 }
 
 fun createRandomUserEntity() = UserEntity().apply {
@@ -16,8 +16,8 @@ fun createRandomUserEntity() = UserEntity().apply {
     password = TestUtils.faker.internet().password()
 }
 
-fun createRandomUserEntity(type : UserType) =
-    when(type){
+fun createRandomUserEntity(type: UserType) =
+    when (type) {
         UserType.BLANK_EMAIL -> UserEntity().apply {
             email = ""
             password = TestUtils.faker.internet().password()
@@ -38,11 +38,11 @@ fun createRandomPostUserEntity() = kr.flab.wiki.core.post.persistence.UserEntity
 }
 
 fun createRandomPostEntity(
-    writer : User,
-    title : String = TestUtils.faker.name().title(),
-    text : String = TestUtils.faker.lorem().fixedString(1000),
-    version : Long = 0,
-    createdAt : LocalDateTime = LocalDateTime.now()
+    writer: User,
+    title: String = TestUtils.faker.name().title(),
+    text: String = TestUtils.faker.lorem().fixedString(1000),
+    version: Long = 0,
+    createdAt: LocalDateTime = LocalDateTime.now()
 ): PostEntity {
     return PostEntity().apply {
         this.writer = writer

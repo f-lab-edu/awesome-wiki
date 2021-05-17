@@ -12,6 +12,7 @@ import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.mockito.Mockito.*
+import java.time.LocalDateTime
 
 //한글 사용을 위해 추가
 @Suppress("NonAsciiCharacters")
@@ -19,10 +20,10 @@ import org.mockito.Mockito.*
 class PostServiceTest {
 
     lateinit var mockPostRepository: PostRepository
-    lateinit var sut : PostService
+    lateinit var sut: PostService
 
     @BeforeEach
-    private fun setup(){
+    private fun setup() {
         mockPostRepository = mock(PostRepositoryImpl::class.java)
         sut = PostServiceImpl(mockPostRepository)
     }
@@ -32,25 +33,26 @@ class PostServiceTest {
     inner class `임의의 사용자가` {
 
         //given
-        private val user : User = createRandomPostUserEntity()
+        private val user: User = createRandomPostUserEntity()
 
         @Nested
         @DisplayName("제목이 100자 이상인 포스트를 등록하는 경우")
         inner class `제목이 100자 이상인 포스트를 등록하는 경우` {
 
             //given
-            private val post : Post = createRandomPostEntity(user, title = "a".repeat(120))
+            private val post: Post = createRandomPostEntity(user, title = "a".repeat(120))
 
             @BeforeEach
             fun mocking() {
-                `when`(mockPostRepository.save(post)).thenReturn(true)
+                `when`(mockPostRepository.save(post)).thenReturn(post)
             }
 
             @Test
             @DisplayName("Exception이 발생한다")
             fun `Exception이 발생한다`() {
                 //when
-                val exception : PostValidationException = assertThrows(PostValidationException::class.java) {sut.writePost(post)}
+                val exception: PostValidationException =
+                    assertThrows(PostValidationException::class.java) { sut.writePost(post) }
                 //then
                 assertThat(exception.message, `is`("제목은 100자 미만이어야 합니다."))
 
@@ -62,18 +64,19 @@ class PostServiceTest {
         inner class `본문이 10,000자 이상인 포스트를 등록하는 경우` {
 
             //given
-            private val post : Post = createRandomPostEntity(user, text = "abcdefghij".repeat(1000))
+            private val post: Post = createRandomPostEntity(user, text = "abcdefghij".repeat(1000))
 
             @BeforeEach
             fun mocking() {
-                `when`(mockPostRepository.save(post)).thenReturn(true)
+                `when`(mockPostRepository.save(post)).thenReturn(post)
             }
 
             @Test
             @DisplayName("Exception이 발생한다")
             fun `Exception이 발생한다`() {
                 //when
-                val exception : PostValidationException = assertThrows(PostValidationException::class.java) {sut.writePost(post)}
+                val exception: PostValidationException =
+                    assertThrows(PostValidationException::class.java) { sut.writePost(post) }
                 //then
                 assertThat(exception.message, `is`("내용은 10,000자 미만이어야 합니다."))
             }
@@ -89,7 +92,7 @@ class PostServiceTest {
 
             @BeforeEach
             fun mocking() {
-                `when`(mockPostRepository.save(postWithDuplicateTitleFirst)).thenReturn(true)
+                `when`(mockPostRepository.save(postWithDuplicateTitleFirst)).thenReturn(postWithDuplicateTitleFirst)
             }
 
             @Test
@@ -97,13 +100,14 @@ class PostServiceTest {
             fun `Exception이 발생한다`() {
                 //when
                 //첫번째 생성
-                val isFirstWritten = sut.writePost(postWithDuplicateTitleFirst)
+                val firstWrittenPost = sut.writePost(postWithDuplicateTitleFirst)
                 //생성한 경우 isTitleAlreadyExists는 true를 반환하게 된다.
-                if(isFirstWritten){
+                if (firstWrittenPost != null) {
                     `when`(mockPostRepository.isTitleAlreadyExists(postWithDuplicateTitleFirst.title)).thenReturn(true)
                 }
 
-                val exception : PostValidationException = assertThrows(PostValidationException::class.java) {sut.writePost(postWithDuplicateTitleSecond)}
+                val exception: PostValidationException =
+                    assertThrows(PostValidationException::class.java) { sut.writePost(postWithDuplicateTitleSecond) }
 
                 //then
                 assertThat(exception.message, `is`("이미 해당 제목으로 생성한 포스트가 존재합니다."))
