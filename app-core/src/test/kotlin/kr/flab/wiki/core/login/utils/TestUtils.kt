@@ -2,6 +2,7 @@ package kr.flab.wiki.core.login
 
 import com.github.javafaker.Faker
 import kr.flab.wiki.core.login.persistence.UserEntity
+import kr.flab.wiki.core.post.persistence.Post
 import kr.flab.wiki.core.post.persistence.PostEntity
 import kr.flab.wiki.core.post.persistence.User
 import java.time.LocalDateTime
@@ -37,14 +38,33 @@ fun createRandomPostUserEntity() = kr.flab.wiki.core.post.persistence.UserEntity
     nickName = TestUtils.faker.funnyName().name()
 }
 
+fun createRandomEditedPostEntity(
+    writer: User,
+    originPost: Post,
+    title: String = TestUtils.faker.name().title(),
+    text: String = TestUtils.faker.lorem().fixedString(1000),
+    createdAt: LocalDateTime = LocalDateTime.now()
+): PostEntity {
+    return PostEntity().apply {
+        this.id = originPost.id
+        this.writer = writer
+        this.title = title
+        this.text = text
+        this.version = originPost.version
+        this.createdAt = createdAt
+    }
+}
+
 fun createRandomPostEntity(
     writer: User,
+    id: Long = 0,
     title: String = TestUtils.faker.name().title(),
     text: String = TestUtils.faker.lorem().fixedString(1000),
     version: Long = 0,
     createdAt: LocalDateTime = LocalDateTime.now()
 ): PostEntity {
     return PostEntity().apply {
+        this.id = id
         this.writer = writer
         this.title = title
         this.text = text

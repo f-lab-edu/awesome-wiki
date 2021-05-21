@@ -4,10 +4,14 @@ import kr.flab.wiki.core.post.business.PostService
 import kr.flab.wiki.core.post.business.PostServiceImpl
 import kr.flab.wiki.core.post.exception.PostValidationException
 import kr.flab.wiki.core.post.persistence.Post
+import kr.flab.wiki.core.post.persistence.PostEntity
 import kr.flab.wiki.core.post.persistence.User
 import kr.flab.wiki.core.post.repository.PostRepository
 import kr.flab.wiki.core.post.repository.PostRepositoryImpl
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.lessThan
+import org.hamcrest.Matchers.lessThanOrEqualTo
 import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -115,6 +119,106 @@ class PostServiceTest {
 
         }
 
+        @Nested
+        @DisplayName("전체 Post 목록을 클릭하는 경우")
+        inner class `전체 Post 목록을 클릭하는 경우` {
+
+            @BeforeEach
+            fun mocking() {
+                `when`(mockPostRepository.getPosts())
+                    .thenReturn(
+                        mutableListOf(
+                            createRandomPostEntity(user),
+                            createRandomPostEntity(user)
+                        )
+                    )
+            }
+
+            @Test
+            @DisplayName("Post 리스트를 불러온다.")
+            fun `Post 리스트를 불러온다`() {
+                //when
+                val posts: List<Post> = sut.getPosts()
+
+                //then
+                verify(mockPostRepository, times(1)).getPosts()
+                assertThat(posts.size, `is`(2))
+
+            }
+
+        }
+
+        @Nested
+        @DisplayName("특정 Post의 제목을 클릭하는 경우")
+        inner class `특정 Post의 제목을 클릭하는 경우` {
+
+            //given
+            private val post: Post = createRandomPostEntity(user)
+
+            @BeforeEach
+            fun mocking() {
+                `when`(mockPostRepository.getPost(post.id))
+                    .thenReturn(post)
+            }
+
+            @Test
+            @DisplayName("해당 Post의 상세정보 혹은 null을 반환한다.")
+            fun `해당 Post의 상세정보 혹은 null을 반환한다`() {
+                //when
+                val loadedPost: Post? = sut.getPost(post.id)
+
+                //then
+                verify(mockPostRepository, times(1)).getPost(post.id)
+                assertThat(loadedPost?.text, `is`(post.text))
+            }
+        }
+
+        @Nested
+        @DisplayName("특정 Post의 내용을 수정하는 경우")
+        inner class `특정 Post의 내용을 수정하는 경우` {
+
+            //given
+            private val post: Post = createRandomPostEntity(user)
+
+            //given
+            private val randomEditedPost: Post = createRandomEditedPostEntity(user, post)
+
+            @BeforeEach
+            fun mocking() {
+                `when`(mockPostRepository.getPost(post.id))
+                    .thenReturn(post)
+                `when`(mockPostRepository.editPost(randomEditedPost)).thenReturn(randomEditedPost)
+            }
+
+            @Test
+            @DisplayName("해당 Post의 내용이 변경된다.")
+            fun `해당 Post의 내용이 변경된다`() {
+
+                //when
+                val editedPost: Post? = sut.editPost(randomEditedPost)
+
+                //then
+                verify(mockPostRepository, times(1)).editPost(randomEditedPost)
+                assertThat(post.text, `is`(not(randomEditedPost.text)))
+                assertThat(randomEditedPost.text, `is`(editedPost!!.text))
+
+            }
+
+            @Test
+            @DisplayName("해당 Post의 version이 증가한다.")
+            fun `해당 Post의 version이 증가한다`() {
+
+                //when
+                val editedPost: Post? = sut.editPost(randomEditedPost)
+
+                //then
+                verify(mockPostRepository, times(1)).editPost(randomEditedPost)
+                assertThat(post.version, `is`(lessThanOrEqualTo(editedPost!!.version)))
+                assertThat(randomEditedPost.version, `is`(lessThanOrEqualTo(editedPost!!.version)))
+
+            }
+
+        }
 
     }
 }
