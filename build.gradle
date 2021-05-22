@@ -10,6 +10,9 @@ buildscript {
         version_junit5 = "5.7.1"
         version_detekt = "1.16.0"
         version_jacoco = "0.8.6"
+        version_javafaker = "1.0.2"
+        version_hamcrest = "2.2"
+        version_mockito = "3.8.0"
 
         // Automatic documentation
         version_asciidoctor_gradle = "3.3.2"

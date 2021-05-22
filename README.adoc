@@ -22,6 +22,15 @@ Spring framework 를 이용한 다중 접속 애플리케이션에서 발생하�
 
 최대한 효율적으로 TDD 를 연습하기 위해 link:{link-todo-sheets}[할 일 목록 Google sheets] 와 link:{link-todo-issues}[Issue Kanban board] 를 적극 활용하고 있습니다.
 
+[[running-tests]]
+=== 테스트 실행
+이 프로젝트에서는 Unit / Integration / End to end 테스트들을 종류별로 구분해 구현하고 있습니다. 테스트들은 martinFowler.com 의 link:https://martinfowler.com/articles/practical-test-pyramid.html[The practical test pyramid] 라는 글에 따라 규모별로 구분하고 있으모, 각 테스트를 실행하는 gradle task 명은 아래와 같습니다.
+
+* `test` - 등록된 모든 테스트를 실행합니다. 시간이 가장 많이 걸립니다.
+* `unitTest` - Unit test 들만을 모두 실행합니다. 시간이 가장 적게 걸립니다.
+* `integrationTest` - Integration test 들만을 모두 실행합니다. Unit test 보다는 실행 시간이 좀 더 걸립니다.
+* `e2eTest` - End to end test 들만을 모두 실행합니다. End to end test 를 일컫는 말들은 여러 가지가 있지만 이 프로젝트에서는 API 가 정상 동작하는지를 확인하는 테스트를 의미합니다.
+
 [[code-quality-measurement]]
 === 코드 품질 측정
 
@@ -33,11 +42,11 @@ Spring framework 를 이용한 다중 접속 애플리케이션에서 발생하�
 
 [source,shell script]
 ----
-./gradlew detekt test jacocoTestReport
+./gradlew detekt testAll jacocoTestReport
 ----
 
 각 Task 들의 설명은 다음과 같습니다.
 
 - `detekt`: link:{link-detekt}[detekt] 를 실행. Kotlin 정적 분석 실행.
-- `test`: 개별 모듈 내에 작성한 test 들을 실행.
+- `test`: 개별 모듈 내에 작성한 test 들을 모두 실행.
 - `jacocoTestReport`: 테스트 실행 및 테스트의 코드 커버리지 측정.

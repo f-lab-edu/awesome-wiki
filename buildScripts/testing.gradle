@@ -1,18 +1,25 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
+/**
+ * JUnit5 의 Test grouping 기능을 위해 정의.
+ *
+ * https://docs.gradle.org/current/userguide/java_testing.html#test_grouping
+ * https://junit.org/junit5/docs/current/user-guide/#writing-tests-tagging-and-filtering
+ */
+def TAG_UNIT_TEST = "unit"
+def TAG_INTEGRATION_TEST = "integration"
+def TAG_E2E_TEST = "e2e"
+
 dependencies {
     // JUnit5
     testImplementation "org.junit.jupiter:junit-jupiter-api:$version_junit5"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$version_junit5"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$version_junit5"
 
-    // javafaker
-    testImplementation group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
-    // Hamcrest
-    testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
-    // https://mvnrepository.com/artifact/org.mockito/mockito-core
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.8.0'
+    testImplementation "com.github.javafaker:javafaker:$version_javafaker"
+    testImplementation "org.hamcrest:hamcrest:$version_hamcrest"
+    testImplementation "org.mockito:mockito-core:$version_mockito"
 }
 
 check.dependsOn test
@@ -32,13 +39,83 @@ artifacts {
 
 test {
     useJUnitPlatform()
+
     reports {
         html.enabled = true
         junitXml.enabled = true
     }
 
     testLogging {
-        events TestLogEvent.SKIPPED, TestLogEvent.FAILED //, TestLogEvent.STANDARD_OUT, TestLogEvent.STANDARD_ERROR
+        events TestLogEvent.SKIPPED, TestLogEvent.FAILED
+
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+}
+
+task unitTest(type: Test) {
+    group "verification"
+
+    useJUnitPlatform {
+        includeTags TAG_UNIT_TEST
+        excludeTags "*"
+    }
+
+    reports {
+        html.enabled = true
+        junitXml.enabled = true
+    }
+
+    testLogging {
+        events TestLogEvent.SKIPPED, TestLogEvent.FAILED
+
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+}
+
+task integrationTest(type: Test) {
+    group "verification"
+
+    useJUnitPlatform {
+        includeTags TAG_INTEGRATION_TEST
+        excludeTags "*"
+    }
+
+    reports {
+        html.enabled = true
+        junitXml.enabled = true
+    }
+
+    testLogging {
+        events TestLogEvent.SKIPPED, TestLogEvent.FAILED
+
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+}
+
+task e2eTest(type: Test) {
+    group "verification"
+
+    useJUnitPlatform {
+        includeTags TAG_E2E_TEST
+        excludeTags "*"
+    }
+
+    reports {
+        html.enabled = true
+        junitXml.enabled = true
+    }
+
+    testLogging {
+        events TestLogEvent.SKIPPED, TestLogEvent.FAILED
 
         exceptionFormat TestExceptionFormat.FULL
         showExceptions true

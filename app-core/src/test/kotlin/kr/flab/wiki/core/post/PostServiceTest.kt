@@ -1,5 +1,6 @@
 package kr.flab.wiki.core.post
 
+import kr.flab.wiki.TAG_TEST_UNIT
 import kr.flab.wiki.core.domain.PostLengthPolicy
 import kr.flab.wiki.core.domain.PostLengthPolicyImpl
 import kr.flab.wiki.core.domain.PostService
@@ -10,18 +11,17 @@ import kr.flab.wiki.core.domain.user.User
 import kr.flab.wiki.core.util.TestUtils
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 
-//테스트에서 한글 사용
-@Suppress("NonAsciiCharacters")
+@Tag(TAG_TEST_UNIT)
+@Suppress("NonAsciiCharacters", "ClassName") // 테스트 표현을 위한 한글 사용
+@DisplayName("PostService 의 동작 시나리오를 확인한다.")
 class PostServiceTest {
-    lateinit var mockPostRepository: PostRepository
-    lateinit var mockPostLengthPolicy: PostLengthPolicy
-    lateinit var sut: PostService
+    private lateinit var mockPostRepository: PostRepository
+    private lateinit var mockPostLengthPolicy: PostLengthPolicy
+    private lateinit var sut: PostService
 
     @BeforeEach
     fun setup() {
@@ -32,7 +32,7 @@ class PostServiceTest {
 
     @Nested
     inner class `랜덤 유저가` {
-        lateinit var randomUser: User
+        private lateinit var randomUser: User
 
         @BeforeEach
         fun beforeEach() {
@@ -41,14 +41,12 @@ class PostServiceTest {
 
         @Nested
         inner class `랜덤 항목을` {
-
-            lateinit var randomPost: Post
+            private lateinit var randomPost: Post
 
             @BeforeEach
             fun beforeEach() {
                 randomPost = TestUtils.createRandomPost(user = randomUser)
                 setRepositoryAction(mockPostRepository, randomPost)
-
             }
 
             @Nested
@@ -69,14 +67,12 @@ class PostServiceTest {
 
         @Nested
         inner class `제목없는 항목을` {
-
-            lateinit var randomPost: Post
+            private lateinit var randomPost: Post
 
             @BeforeEach
             fun beforeEach() {
                 randomPost = TestUtils.createRandomPost(user = randomUser, title = "")
                 setRepositoryAction(mockPostRepository, randomPost)
-
             }
 
             @Test
@@ -88,14 +84,12 @@ class PostServiceTest {
 
         @Nested
         inner class `제목이 100자 이상인 항목을` {
-
-            lateinit var randomPost: Post
+            private lateinit var randomPost: Post
 
             @BeforeEach
             fun beforeEach() {
                 randomPost = TestUtils.createRandomPost(user = randomUser, title = "title".repeat(25))
                 setRepositoryAction(mockPostRepository, randomPost)
-
             }
 
             @Test
@@ -106,14 +100,12 @@ class PostServiceTest {
 
         @Nested
         inner class `본문이 10000만 이상인 항목을` {
-
-            lateinit var randomPost: Post
+            private lateinit var randomPost: Post
 
             @BeforeEach
             fun beforeEach() {
                 randomPost = TestUtils.createRandomPost(user = randomUser, mainText = "titletitle".repeat(1000))
                 setRepositoryAction(mockPostRepository, randomPost)
-
             }
 
             @Test
