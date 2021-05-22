@@ -1,5 +1,6 @@
 package kr.flab.wiki.core.login
 
+import kr.flab.wiki.TAG_TEST_UNIT
 import kr.flab.wiki.core.login.business.UserLoginService
 import kr.flab.wiki.core.login.business.UserLoginServiceImpl
 import kr.flab.wiki.core.login.exception.UserValidationException
@@ -10,35 +11,29 @@ import kr.flab.wiki.core.login.repository.UserLoginRepository
 import kr.flab.wiki.core.login.repository.UserLoginRepositoryImpl
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 
-@DisplayName("해당 테스트는 UserLoginService 메서드를 테스트하는 클래스이다.")
+@Tag(TAG_TEST_UNIT)
+@DisplayName("UserLoginService 의 동작 시나리오를 확인한다.")
 class UserLoginServiceTest {
-
-    lateinit var mockUserLoginRepository : UserLoginRepository
-    lateinit var mockSessionRepository : SessionRepository
-    lateinit var sut : UserLoginService
+    private lateinit var mockUserLoginRepository: UserLoginRepository
+    private lateinit var mockSessionRepository: SessionRepository
+    private lateinit var sut: UserLoginService
 
     @BeforeEach
     private fun setup() {
-
         mockUserLoginRepository = mock(UserLoginRepositoryImpl::class.java)
         mockSessionRepository = mock(SessionRepositoryImpl::class.java)
         sut = UserLoginServiceImpl(mockUserLoginRepository, mockSessionRepository)
-
     }
 
     @Nested
     @DisplayName("로그인 하지 않은 사용자는")
     inner class GivenAnonymousUser {
-
         // given
-        private val user : User = createRandomUserEntity()
+        private val user: User = createRandomUserEntity()
 
         @Nested
         @DisplayName("이메일/비밀번호 입력 후 로그인 버튼을 클릭했을 때")
@@ -51,20 +46,22 @@ class UserLoginServiceTest {
                 @Test
                 @DisplayName("세션에 유저 정보를 저장하고 로그인에 성공한다.")
                 fun thenCreateSessionAndLoginSuccess() {
-
-                    // mocking
-                    `when`(mockUserLoginRepository.findUserWithIdAndPassword(user.email, user.password)).thenReturn(user)
+                    // when
+                    `when`(
+                        mockUserLoginRepository.findUserWithIdAndPassword(
+                            user.email,
+                            user.password
+                        )
+                    ).thenReturn(user)
                     `when`(mockSessionRepository.setAttribute("userName", user.email)).thenReturn(user.email)
 
-                    // when
-                    val loggedInUser : User? = sut.login(user)
+                    // then
+                    val loggedInUser: User? = sut.login(user)
 
-                    // expected/then
+                    // expect
                     verify(mockSessionRepository, times(1)).setAttribute("userName", user.email)
                     assertThat(user.email, `is`(loggedInUser?.email))
-
                 }
-
             }
 
             @Nested
@@ -74,24 +71,24 @@ class UserLoginServiceTest {
                 @Test
                 @DisplayName("로그인에 실패한다.")
                 fun thenLoginFailed() {
-
-                    // mocking
-                    `when`(mockUserLoginRepository.findUserWithIdAndPassword(user.email, user.password)).thenReturn(null)
+                    // when
+                    `when`(
+                        mockUserLoginRepository.findUserWithIdAndPassword(
+                            user.email,
+                            user.password
+                        )
+                    ).thenReturn(null)
                     `when`(mockSessionRepository.setAttribute("userName", user.email)).thenReturn(user.email)
 
-                    // when
-                    val loginException : UserValidationException = assertThrows(UserValidationException::class.java) { sut.login(user) }
+                    // then
+                    val loginException: UserValidationException =
+                        assertThrows(UserValidationException::class.java) { sut.login(user) }
 
-                    // expected/then
+                    // expect
                     assertThat(loginException.message, `is`("There's No Matched Member!"))
                     verify(mockSessionRepository, times(0)).setAttribute("userName", user.email)
-
                 }
-
             }
-
         }
-
     }
-
 }
