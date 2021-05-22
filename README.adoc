@@ -42,13 +42,12 @@ Spring framework 를 이용한 다중 접속 애플리케이션에서 발생하�
 
 [source,shell script]
 ----
-./gradlew detekt testAll jacocoTestReport
+./gradlew detekt jacocoTestReport
 ----
 
 각 Task 들의 설명은 다음과 같습니다.
 
 - `detekt`: link:{link-detekt}[detekt] 를 실행. Kotlin 정적 분석 실행.
-- `test`: 개별 모듈 내에 작성한 test 들을 모두 실행.
 - `jacocoTestReport`: 테스트 실행 및 테스트의 코드 커버리지 측정.
 
 [[project-structure]]

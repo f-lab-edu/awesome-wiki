@@ -1,5 +1,6 @@
 package kr.flab.wiki.core.testcase.user
 
+import com.github.javafaker.Faker
 import kr.flab.wiki.TAG_TEST_UNIT
 import kr.flab.wiki.core.common.exception.user.UserEmailAlreadyExistException
 import kr.flab.wiki.core.common.exception.user.UserNameAlreadyExistException
@@ -9,7 +10,6 @@ import kr.flab.wiki.core.domain.user.UserRegistrationPolicy
 import kr.flab.wiki.core.domain.user.UserService
 import kr.flab.wiki.core.domain.user.persistence.UserEntity
 import kr.flab.wiki.core.domain.user.repository.UserRepository
-import kr.flab.wiki.core.login.TestUtils.faker
 import kr.flab.wiki.core.testlib.user.Users
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
@@ -24,6 +24,8 @@ import org.mockito.kotlin.any
 @DisplayName("UserService 의 동작 시나리오를 확인한다.")
 @Suppress("ClassName", "NonAsciiCharacters") // 테스트 표현을 위한 한글 사용
 class UserServiceTest {
+    private val faker = Faker.instance()
+
     @Mock
     private lateinit var userRepo: UserRepository
 
