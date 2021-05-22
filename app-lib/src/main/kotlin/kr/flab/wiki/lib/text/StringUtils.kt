@@ -1,4 +1,4 @@
-package kr.flab.wiki.text
+package kr.flab.wiki.lib.text
 
 import java.util.regex.Pattern
 

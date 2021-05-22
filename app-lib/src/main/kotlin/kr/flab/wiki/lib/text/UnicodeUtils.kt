@@ -1,4 +1,4 @@
-package kr.flab.wiki.text
+package kr.flab.wiki.lib.text
 
 /*
  * Referenced from: https://www.unicode.org/Public/UCD/latest/ucd/PropList.txt

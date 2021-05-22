@@ -1,4 +1,4 @@
-package kr.flab.wiki.i18n
+package kr.flab.wiki.lib.i18n
 
 import java.util.*
 
