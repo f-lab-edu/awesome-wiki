@@ -1,3 +1,5 @@
+apply from: "$project.rootDir/buildScripts/test-aggregator.gradle"
+
 buildscript {
     ext {
         // lang
