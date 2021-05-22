@@ -1,0 +1,13 @@
+[[overview]]
+== type
+이 디렉토리 아래에는 앱 전반에 걸쳐 참조할 수 있는 타입들을 정의합니다.
+
+----
+type/
+  annotations/
+  aggregate/
+  enums/
+  exception/
+    client/
+    server/
+----

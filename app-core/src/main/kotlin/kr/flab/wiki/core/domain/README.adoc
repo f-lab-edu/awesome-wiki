@@ -1,0 +1,7 @@
+[[overview]]
+== domain
+개별 Domain Service 로직들을 모아 둔 디렉토리입니다.
+
+추후 모듈별 분리를 용이하게 하기 위해 각 Domain Service 들은 외부의 Domain object 의 존재를 전혀 모른다고 가정했습니다.
+
+또한 편의상 Domain model 과 Entity 를 1:1 매핑한 형태로 구현했지만, 반드시 Domain model 과 Entity 가 같을 필요는 없습니다. 오히려 Domain model 과 Entity 가 1:1 이라면 Database Driven Design 이 될 가능성이 높으니 주의해야 합니다.

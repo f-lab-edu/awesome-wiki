@@ -1,0 +1,18 @@
+[[overview]]
+== api
+이 디렉토리 아래에는 외부에 제공하는 API 구현체를 정의합니다.
+
+API 는 사용자 시나리오 중심으로 크게 그룹짓고, 다시 세부 시나리오별로 package 를 만드는 편이 좋습니다. 아래 예시를 참고해 주세요.
+
+----
+api/
+  user/
+    login/
+    register/
+    quit/
+    reportBadUser/
+  document/
+    browse/
+    write/
+    askProtection/
+----
