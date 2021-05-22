@@ -1,8 +1,18 @@
-apply plugin: 'io.gitlab.arturbosch.detekt'
+apply plugin: "io.gitlab.arturbosch.detekt"
+apply from: "$project.rootDir/buildScripts/packaging.gradle"
 
 detekt {
+    def buildConfig = getBuildConfig()
+
     toolVersion = "$version_detekt"
     config = files("$project.rootDir/buildScripts/settings/detekt-config.yml")
+    input = files(
+            "src/main/java",
+            "src/main/kotlin",
+            "src/$buildConfig/java",
+            "src/$buildConfig/kotlin"
+    )
+
     reports {
         xml {
             enabled = true
