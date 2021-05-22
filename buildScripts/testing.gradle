@@ -20,6 +20,7 @@ dependencies {
     testImplementation "com.github.javafaker:javafaker:$version_javafaker"
     testImplementation "org.hamcrest:hamcrest:$version_hamcrest"
     testImplementation "org.mockito:mockito-core:$version_mockito"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$version_mockitoKotlin"
 }
 
 check.dependsOn test
