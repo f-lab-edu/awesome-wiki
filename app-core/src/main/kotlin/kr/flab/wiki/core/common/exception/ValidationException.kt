@@ -1,3 +1,6 @@
 package kr.flab.wiki.core.common.exception
 
-open class ValidationException(msg : String) : Exception(msg)
+open class ValidationException(
+    override val message: String,
+    override val cause: Throwable?
+) : Exception(message, cause)

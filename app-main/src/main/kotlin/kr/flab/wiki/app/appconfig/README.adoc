@@ -1,0 +1,13 @@
+[[overview]]
+== appconfig
+이 디렉토리 아래에는 앱 실행에 필요한 환경 설정 등을 정의합니다. 주로 프로그램 시작시 한번만 호출되는 성격의 로직들 위주로 모아두기 바랍니다.
+
+----
+appconfig/
+  appProperties/
+  async/
+  codec/
+  infrastructure/
+  exceptionTranslator/
+  security/
+----

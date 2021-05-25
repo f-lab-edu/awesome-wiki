@@ -1,0 +1,22 @@
+[[overview]]
+== infrastructure
+이 디렉토리 아래에 도메인 업무 규칙(비즈니스 로직)을 처리하는 각종 외부 인프라스트럭쳐에 실제로 접근하는 로직들을 작성해 주세요.
+
+이 디렉토리의 내용은 되도록이면 `internal` 키워드를 이용해 구체 정보를 외부에 노출하지 않아야 합니다.
+
+----
+infrastructre/
+  TransactionHelper.kt
+  MessageQueue.kt
+  messageQueue/
+    KafkaMessageQueue.kt : MessageQueue
+    AwsSqsMessageQueue.kt
+  mysql/
+    MySqlTransactionHelper.kt : TransactionHelper
+    MySqlQueryUtils.kt
+  mongo/
+    MongoTransactionHelper.kt : TransactionHelper
+    MongoExecutionUtils.kt
+  redis/
+    RedisCommandHelper.kt
+----

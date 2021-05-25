@@ -1,0 +1,5 @@
+개별 domain 들은 microservice 로 분리되어 있다고 가정합니다.
+
+(To be determined)
+
+app-core 모듈의 역할에 대해 상세하게 작성해주세요.

@@ -13,6 +13,7 @@ buildscript {
         version_javafaker = "1.0.2"
         version_hamcrest = "2.2"
         version_mockito = "3.8.0"
+        version_mockitoKotlin = "3.2.0"
 
         // Automatic documentation
         version_asciidoctor_gradle = "3.3.2"

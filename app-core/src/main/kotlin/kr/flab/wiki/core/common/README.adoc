@@ -1,0 +1,10 @@
+[[overview]]
+== common
+이 디렉토리 아래에는 `app-core` 모듈 및 외부 모듈에 제공할 공통 로직들을 작성해 주세요.
+
+----
+common/
+  annotations/
+  enums/
+  exception/
+----

@@ -1,0 +1,12 @@
+[[overview]]
+== component
+이 디렉토리 아래에는 앱 전반에 걸쳐 필요한 각종 로직들을 둡니다.
+
+----
+components/
+  authentication/
+  event/          # 종류 많아지고 복잡하면 별도 디렉토리로 분리 가능
+  interceptor/
+  logging/
+  validation/
+----
