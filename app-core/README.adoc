@@ -1,5 +1,8 @@
+= app-core
+
+[[overview]]
+== 개요
+
 개별 domain 들은 microservice 로 분리되어 있다고 가정합니다.
 
-(To be determined)
-
-app-core 모듈의 역할에 대해 상세하게 작성해주세요.
+프로젝트의 도메인 구현체와 annotation, 도메인을 사용하면서 발생할 수 있는 exception이 정의되어있는 패키지입니다.

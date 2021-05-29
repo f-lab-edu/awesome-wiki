@@ -1,3 +1,10 @@
-(To be determined)
+= app-main
 
-app-main 모듈의 역할에 대해 상세하게 작성해주세요.
+[[overview]]
+== 개요
+
+app-core 프로젝트를 활용하여 실제 위키 프로젝트를 서비스하는데 필요한 코드들이 모여있습니다.
+
+Spring framework와 같은 외부 코드는 app-main에서만 사용합니다.
+
+app-main과 실제 위키 구현체인 app-core 프로젝트를 분리하여 위키 프로젝트가 Spring에 종속적이지 않게 구현했습니다.
