@@ -14,6 +14,8 @@
 :link-todo-sheets: https://docs.google.com/spreadsheets/d/1xWtMZ2Ng69OcFMIkfMSQvYUPtqB-fzVKMoopEGIuOIA
 :link-todo-issues: https://github.com/f-lab-edu/awesome-wiki/issues
 :link-detekt: https://arturbosch.github.io/detekt/index.html
+:link-clean-architecture: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
+:link-moduler-monolith: https://medium.com/design-and-tech-co/modular-monoliths-a-gateway-to-microservices-946f2cbdf382
 
 [[overview]]
 == 개요
@@ -53,14 +55,31 @@ Spring framework 를 이용한 다중 접속 애플리케이션에서 발생하�
 [[project-structure]]
 === 프로젝트 모듈 및 구조 설명
 
+* 추후 Microservice로 전환이 용이한 형태인 link:{link-moduler-monolith}[Moduler Monolith]를 gradle의 multi-module을 이용해 구성했습니다.
+
+* link:{link-clean-architecture}[Clean Architecture]의 영감을 받아 module의 구성요소와 의존 방향을 설계했습니다.
+
 현재 프로젝트는 크게 스프링 관련 코드, 즉 entry point가 있는 app-main 모듈과 도메인/비즈니스 로직을 모아둔 app-core모듈로 나뉩니다.
 
 도메인과 프레임워크 코드를 모듈로 분리하여 프로젝트가 spring에 의존하지 않고 약간의 수정으로 다른 프레임워크에서 실행 가능하도록 하는것이 목적입니다.
 
-* `app-core` - 설계한 도메인 모델과 서비스를 모아둔 모듈입니다. 문서화를 위한 annotation,과 도메인을 사용하면서 발생하는 exception도 정의되어 있습니다.
+프로젝트는 다음 3개의 모듈로 구성이 되어있고, 각 모듈의 개요는 다음과 같습니다.
+
+* `app-core` : link:{link-clean-architecture}[Clean Architecture]에서 inner circles(그 중에서도 Entities)에 해당하는 부분입니다. +
+               위키 서비스의 Domain과 Business Rules를 구성하고 있으며, 외부 모듈에 의존하지 않습니다. +
+               설계한 도메인 모델과 서비스를 모아둔 모듈입니다. 문서화를 위한 annotation,과 도메인을 사용하면서 발생하는 exception도 정의되어 있습니다. +
+               이러한 특성 덕분에 이식성이 높아짐을 얻을 수 있습니다.
+
+app-core의 패키지는 다음과 같이 구성되어 있습니다.
+
 ** `domain` - 도메인의 구현체 패키지입니다. app-main 프로젝트에서는 도메인의 인터페이스만 사용 가능합니다.
 *** `document` - 위키 문서 자체의 도메인입니다.
 *** `user` - 문서를 작성한 유저의 도메인입니다
-* `app-main` - Spring 프레임워크 관련 코드를 모아둔 모듈입니다.
-* `app-lib` - 프로젝트에서 자주 사용하는 유틸리티성 메소드를 모아둔 모듈입니다.
+
+* `app-main` : link:{link-clean-architecture}[Clean Architecture]의 outer circles에 해당하는 부분입니다. +
+               여기서부터 Use Cases를 포함하여 outer circles의 대부분의 계층이 포함됩니다. +
+               app-core 모듈을 의존하며, Web Framework(Spring)와 Database, Client, UI 등 외부 미들웨어 혹은 라이브러리와 직접 의존하는 모듈입니다. +
+               여러 계층을 한 모듈에 담아냈기 때문에, 추후 분리될 가능성이 있는 모듈입니다.
+
+* `app-lib` : 위키 서비스의 도메인과 관련 없지만, 자주 사용하는 유틸리티성 메소드를 모아둔 모듈입니다.
 
