@@ -49,7 +49,7 @@ Spring framework 를 이용한 다중 접속 애플리케이션에서 발생하�
 
 - `detekt`: link:{link-detekt}[detekt] 를 실행. Kotlin 정적 분석 실행.
 - `jacocoTestReport`: 테스트 실행 및 테스트의 코드 커버리지 측정.
-
+테스트
 [[project-structure]]
 === 프로젝트 모듈 및 구조 설명
 
