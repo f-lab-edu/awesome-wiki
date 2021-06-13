@@ -16,5 +16,4 @@ internal class DocumentEntity(
     override var updatedAt: LocalDateTime,
 
     override var version: Long,
-) : Document {
-}
+) : Document

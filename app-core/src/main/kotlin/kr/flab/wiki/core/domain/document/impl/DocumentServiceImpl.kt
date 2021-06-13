@@ -37,8 +37,6 @@ internal class DocumentServiceImpl(
                     version = 1L
                 )
             } else {
-                // TODO: 작성자 외의 사람도 편집 가능한지? 이걸 정책으로 뺄 수 있을지?
-
                 return it.apply {
                     this.body = body
                     this.updatedAt = now
