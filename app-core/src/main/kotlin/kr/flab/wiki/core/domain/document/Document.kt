@@ -10,11 +10,9 @@ interface Document {
 
     var body: String
 
-    val creator: User
+    var creator: User
 
     val createdAt: LocalDateTime
-
-    var updatedAt: LocalDateTime
 
     var version: Long
 }

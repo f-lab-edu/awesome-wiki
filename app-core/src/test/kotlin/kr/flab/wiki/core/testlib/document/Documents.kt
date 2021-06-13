@@ -21,7 +21,6 @@ object Documents {
             body = body,
             creator = creator,
             createdAt = now,
-            updatedAt = now,
             version = 1L
         )
     }
@@ -31,7 +30,6 @@ object Documents {
         body: String? = null,
         creator: User? = null,
         createdAt: LocalDateTime? = null,
-        updatedAt: LocalDateTime? = null,
         version: Long? = null
     ): Document {
         val faker = Faker.instance()
@@ -42,7 +40,6 @@ object Documents {
             body = body ?: faker.lorem().paragraph(),
             creator = creator ?: Users.randomUser(),
             createdAt = createdAt ?: now,
-            updatedAt = updatedAt ?: now,
             version = version ?: faker.number().randomNumber(4, false)
         )
     }

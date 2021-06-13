@@ -9,12 +9,9 @@ internal class DocumentEntity(
 
     override var body: String,
 
-    override val creator: User,
+    override var creator: User,
 
     override val createdAt: LocalDateTime,
 
-    override var updatedAt: LocalDateTime,
-
     override var version: Long,
-) : Document {
-}
+) : Document
