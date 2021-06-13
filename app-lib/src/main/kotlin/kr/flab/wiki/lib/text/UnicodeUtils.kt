@@ -1,3 +1,4 @@
+@file:Suppress("NoMultipleSpaces")
 package kr.flab.wiki.lib.text
 
 /*
