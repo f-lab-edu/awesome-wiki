@@ -13,6 +13,14 @@ interface DocumentService {
         creator: User,
     ): Document
 
+    fun searchDocumentsByTitle(
+        title: String
+    ): MutableList<Document>
+
+    fun getDocumentByTitle(
+        title: String
+    ): Document?
+
     companion object {
         fun newInstance(
             documentRepository: DocumentRepository,

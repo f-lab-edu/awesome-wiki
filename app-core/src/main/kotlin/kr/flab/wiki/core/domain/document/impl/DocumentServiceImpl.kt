@@ -33,7 +33,6 @@ internal class DocumentServiceImpl(
                     body = body,
                     creator = creator,
                     createdAt = now,
-                    updatedAt = now,
                     version = 1L
                 )
             } else {
@@ -41,7 +40,6 @@ internal class DocumentServiceImpl(
 
                 return it.apply {
                     this.body = body
-                    this.updatedAt = now
                     this.version = ++version
                 }
             }
@@ -49,4 +47,14 @@ internal class DocumentServiceImpl(
 
         return this.docsRepo.save(document)
     }
+
+    override fun searchDocumentsByTitle(title: String): MutableList<Document> {
+        return docsRepo.findAllByTitle(title)
+    }
+
+    override fun getDocumentByTitle(title: String): Document? {
+        return docsRepo.findByTitle(title)
+    }
+
+
 }

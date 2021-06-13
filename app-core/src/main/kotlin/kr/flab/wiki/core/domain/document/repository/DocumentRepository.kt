@@ -17,4 +17,6 @@ interface DocumentRepository {
     fun findByTitle(title: String): Document?
 
     fun save(document: Document): Document
+
+    fun findAllByTitle(title: String): MutableList<Document>
 }
