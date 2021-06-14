@@ -6,3 +6,11 @@
 개별 domain 들은 microservice 로 분리되어 있다고 가정합니다.
 
 프로젝트의 도메인 구현체와 annotation, 도메인을 사용하면서 발생할 수 있는 exception이 정의되어있는 패키지입니다.
+
+== 메서드 네이밍 룰
+
+메서드 네이밍 규칙 중 findXXX 와 getXXX의 차이를 구분하고 있습니다.
+
+find 메서드는 Maybe operation으로, 검색 결과가 존재하지 않을 수도 있음을 허용하는 메서드입니다.
+
+get 메서드는 Confident operation으로, 검색 결과가 반드시 존재할 것으로 예상하고 만약 결과가 존재하지 않는다면 예상치 못한 경우이므로 Exception을 발생시킵니다.
