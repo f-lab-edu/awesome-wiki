@@ -48,12 +48,12 @@ internal class DocumentServiceImpl(
         return this.docsRepo.save(document)
     }
 
-    override fun searchDocumentsByTitle(title: String): MutableList<Document> {
+    override fun findDocumentsByTitle(title: String): MutableList<Document> {
         return docsRepo.findAllByTitle(title)
     }
 
-    override fun getDocumentByTitle(title: String): Document? {
-        return docsRepo.findByTitle(title)
+    override fun getDocumentByTitle(title: String): Document {
+        return docsRepo.getByTitle(title)
     }
 
 

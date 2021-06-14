@@ -2,8 +2,10 @@ package kr.flab.wiki.core.testcase.document
 
 import com.github.javafaker.Faker
 import kr.flab.wiki.TAG_TEST_UNIT
+import kr.flab.wiki.core.common.exception.document.DocumentNotFoundException
 import kr.flab.wiki.core.common.exception.document.InvalidBodyException
 import kr.flab.wiki.core.common.exception.document.InvalidTitleException
+import kr.flab.wiki.core.common.exception.user.UserNameAlreadyExistException
 import kr.flab.wiki.core.domain.document.DocumentFormatPolicy
 import kr.flab.wiki.core.domain.document.DocumentService
 import kr.flab.wiki.core.domain.document.persistence.DocumentEntity
@@ -129,11 +131,6 @@ class DocumentServiceTest {
         // given:
         private val inputTitle = faker.lorem().word()
 
-        @BeforeEach
-        fun setup() {
-
-        }
-
         @Nested
         inner class `입력된 제목을 포함하는 문서가` {
 
@@ -150,7 +147,7 @@ class DocumentServiceTest {
                 )
 
                 // then:
-                val documents = sut.searchDocumentsByTitle(inputTitle)
+                val documents = sut.findDocumentsByTitle(inputTitle)
 
                 // expect:
                 assertThat(documents.all { document -> document.title.contains(inputTitle) }, `is`(true))
@@ -164,7 +161,7 @@ class DocumentServiceTest {
                 `when`(docsRepo.findAllByTitle(inputTitle)).thenReturn(mutableListOf())
 
                 // then:
-                val documents = sut.searchDocumentsByTitle(inputTitle)
+                val documents = sut.findDocumentsByTitle(inputTitle)
 
                 // expect:
                 assertThat(documents.isEmpty(), `is`(true))
@@ -181,23 +178,41 @@ class DocumentServiceTest {
         // given:
         private val chosenTitle = faker.lorem().word()
 
-        @BeforeEach
-        fun setup() {
+        @Nested
+        inner class `선택한 문서가 존재하면` {
+
+            @Test
+            fun `선택한 문서를 반환한다`() {
+
+                // when:
+                `when`(docsRepo.getByTitle(chosenTitle)).thenReturn(Documents.randomDocument(title = chosenTitle))
+
+                // then:
+                val document = sut.getDocumentByTitle(chosenTitle)
+
+                // expect:
+                assertThat(document.title, `is`(chosenTitle))
+
+            }
 
         }
 
-        @Test
-        fun `선택한 문서를 반환한다`() {
+        @Nested
+        inner class `선택한 문서가 존재하지 않으면` {
 
-            // when:
-            `when`(docsRepo.findByTitle(chosenTitle)).thenReturn(Documents.randomDocument(title = chosenTitle))
+            @Test
+            fun `예외를 발생한다`() {
 
-            // then:
-            val document = sut.getDocumentByTitle(chosenTitle)
+                // when:
+                `when`(docsRepo.getByTitle(chosenTitle)).thenThrow(DocumentNotFoundException())
 
-            // expect:
-            assertThat(document?.title, `is`(chosenTitle))
+                // expect:
+                assertThrows(DocumentNotFoundException::class.java) { sut.getDocumentByTitle(chosenTitle) }
+
+            }
 
         }
+
+
     }
 }
