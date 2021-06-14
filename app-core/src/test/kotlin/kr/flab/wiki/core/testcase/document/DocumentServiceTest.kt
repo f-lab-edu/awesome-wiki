@@ -95,8 +95,8 @@ class DocumentServiceTest {
         }
 
         @Nested
-        inner class `있다면` {
-            private val previousDocument = Documents.randomDocument(title = title)
+        inner class 있다면 {
+            private val previousDocument = Documents.randomDocument(title = title, version = 1)
             private lateinit var savedDocument: Document
             @BeforeEach
             fun setupWhen(){
@@ -107,6 +107,9 @@ class DocumentServiceTest {
             fun `기존 내용을 수정할 수 있다`(){
                 // then:
                 savedDocument = sut.saveDocument(title, body, creator)
+
+                assertThat(savedDocument.version, `is`(not(1)))
+
             }
             @Test
             fun `다른 유저가 기존 내용을 수정할 수 있다`(){
@@ -116,11 +119,16 @@ class DocumentServiceTest {
                 savedDocument = sut.saveDocument(title, body, otherCreator)
                 assertThat(savedDocument.creator, `is`(otherCreator))
 
+                assertThat(savedDocument.version, `is`(not(1)))
+
+            }
+            @Test
+            fun `기존 내용을 수정하고 버전이 1 증가한다`(){
+                savedDocument = sut.saveDocument(title, body, creator)
+                assertThat(savedDocument.version, `is`(2))
             }
             @AfterEach
             fun afterEach(){
-                // expect:
-                assertThat(savedDocument.version, `is`(not(1)))
                 assertThat(savedDocument.title, `is`(title))
                 assertThat(savedDocument.title, `is`(previousDocument.title))
             }
