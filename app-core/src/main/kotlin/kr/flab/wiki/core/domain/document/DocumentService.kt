@@ -21,8 +21,7 @@ interface DocumentService {
     ): Document
     fun findDocumentHistory(
         title: String,
-        startRevision: Long,
-        endRevision: Long
+        range: LongRange
     ): List<Document>
     companion object {
         fun newInstance(

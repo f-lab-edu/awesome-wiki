@@ -20,5 +20,5 @@ interface DocumentRepository {
 
     fun findAllByTitle(title: String): MutableList<Document>
 
-    fun findHistoryByTitle(title: String, fromRevision: Long, toRevision: Long): List<Document>
+    fun findHistoryByTitle(title: String, range: LongRange): List<Document>
 }

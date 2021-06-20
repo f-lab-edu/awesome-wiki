@@ -225,7 +225,8 @@ class DocumentServiceTest {
                 @Test
                 fun `처음부터 끝까지 조회시 범위에 해당하는 변경내역을 반환`(){
                     val versionList = listOf(firstVersion, firstVersion+1, firstVersion+2, firstVersion+3)
-                    `when`(docsRepo.findHistoryByTitle(chosenTitle, firstVersion, lastVersion)).thenReturn(
+                    val range = firstVersion..lastVersion
+                    `when`(docsRepo.findHistoryByTitle(chosenTitle, range)).thenReturn(
                         listOf(
                             Documents.randomDocument(title = chosenTitle, version = versionList[0]),
                             Documents.randomDocument(title = chosenTitle, version = versionList[1]),
@@ -233,8 +234,8 @@ class DocumentServiceTest {
                             lastRevision,
                         )
                     )
-                    val history = sut.findDocumentHistory(chosenTitle, firstVersion, lastVersion)
-                    assertThat(history.all { document -> versionList.contains(document.version) }, `is`(true))
+                    val history = sut.findDocumentHistory(chosenTitle, range)
+                    assertThat(history.all { document -> document.version in range }, `is`(true))
                 }
             }
         }

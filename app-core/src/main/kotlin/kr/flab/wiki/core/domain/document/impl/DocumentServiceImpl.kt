@@ -46,7 +46,7 @@ internal class DocumentServiceImpl(
     override fun getDocumentByTitle(title: String): Document {
         return docsRepo.getByTitle(title)
     }
-    override fun findDocumentHistory(title: String, startRevision: Long, endRevision: Long): List<Document> {
-        return docsRepo.findHistoryByTitle(title, startRevision, endRevision)
+    override fun findDocumentHistory(title: String, range: LongRange): List<Document> {
+        return docsRepo.findHistoryByTitle(title, range)
     }
 }
