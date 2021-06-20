@@ -6,7 +6,6 @@ import kr.flab.wiki.core.common.exception.document.DocumentNotFoundException
 import kr.flab.wiki.core.common.exception.document.InvalidBodyException
 import kr.flab.wiki.core.common.exception.document.InvalidTitleException
 import kr.flab.wiki.core.domain.document.Document
-import kr.flab.wiki.core.common.exception.user.UserNameAlreadyExistException
 import kr.flab.wiki.core.domain.document.DocumentFormatPolicy
 import kr.flab.wiki.core.domain.document.DocumentService
 import kr.flab.wiki.core.domain.document.persistence.DocumentEntity
@@ -180,7 +179,6 @@ class DocumentServiceTest {
 
             @Test
             fun `존재하지 않는다면 빈 리스트를 반환한다`() {
-
                 // when:
                 `when`(docsRepo.findAllByTitle(inputTitle)).thenReturn(mutableListOf())
 
@@ -204,13 +202,15 @@ class DocumentServiceTest {
 
         @Nested
         inner class `선택한 문서가 존재하면` {
-
+            val lastVersion = 4L
+            val lastRevision = Documents.randomDocument(title=chosenTitle, version = lastVersion)
+            @BeforeEach
+            fun beforeEach(){
+                // when:
+                `when`(docsRepo.getByTitle(chosenTitle)).thenReturn(lastRevision)
+            }
             @Test
             fun `선택한 문서를 반환한다`() {
-
-                // when:
-                `when`(docsRepo.getByTitle(chosenTitle)).thenReturn(Documents.randomDocument(title = chosenTitle))
-
                 // then:
                 val document = sut.getDocumentByTitle(chosenTitle)
 
@@ -219,6 +219,24 @@ class DocumentServiceTest {
 
             }
 
+            @Nested
+            inner class `문서의 현재 변경 내역 조회 시`{
+                val firstVersion = 1L
+                @Test
+                fun `처음부터 끝까지 조회시 범위에 해당하는 변경내역을 반환`(){
+                    val versionList = listOf(firstVersion, firstVersion+1, firstVersion+2, firstVersion+3)
+                    `when`(docsRepo.findHistoryByTitle(chosenTitle, firstVersion, lastVersion)).thenReturn(
+                        listOf(
+                            Documents.randomDocument(title = chosenTitle, version = versionList[0]),
+                            Documents.randomDocument(title = chosenTitle, version = versionList[1]),
+                            Documents.randomDocument(title = chosenTitle, version = versionList[2]),
+                            lastRevision,
+                        )
+                    )
+                    val history = sut.findDocumentHistory(chosenTitle, firstVersion, lastVersion)
+                    assertThat(history.all { document -> versionList.contains(document.version) }, `is`(true))
+                }
+            }
         }
 
         @Nested
@@ -236,7 +254,7 @@ class DocumentServiceTest {
             }
 
         }
-
-
     }
+
+
 }

@@ -4,6 +4,7 @@ import kr.flab.wiki.core.common.annotation.DomainService
 import kr.flab.wiki.core.domain.document.impl.DocumentServiceImpl
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 import kr.flab.wiki.core.domain.user.User
+import java.time.LocalDateTime
 
 @DomainService
 interface DocumentService {
@@ -12,7 +13,6 @@ interface DocumentService {
         body: String,
         creator: User,
     ): Document
-
     fun findDocumentsByTitle(
         title: String
     ): MutableList<Document>
@@ -20,7 +20,11 @@ interface DocumentService {
     fun getDocumentByTitle(
         title: String
     ): Document
-
+    fun findDocumentHistory(
+        title: String,
+        startRevision: Long,
+        endRevision: Long
+    ): List<Document>
     companion object {
         fun newInstance(
             documentRepository: DocumentRepository,

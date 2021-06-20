@@ -9,6 +9,7 @@ import kr.flab.wiki.core.domain.document.persistence.DocumentEntity
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 import kr.flab.wiki.core.domain.user.User
 import kr.flab.wiki.lib.time.utcNow
+import java.time.LocalDateTime
 
 internal class DocumentServiceImpl(
     private val docsRepo: DocumentRepository,
@@ -46,6 +47,7 @@ internal class DocumentServiceImpl(
     override fun getDocumentByTitle(title: String): Document {
         return docsRepo.getByTitle(title)
     }
-
-
+    override fun findDocumentHistory(title: String, startRevision: Long, endRevision: Long): List<Document> {
+        return docsRepo.findHistoryByTitle(title, startRevision, endRevision);
+    }
 }
