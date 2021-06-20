@@ -2,8 +2,6 @@ package kr.flab.wiki.core.domain.document.repository
 
 import kr.flab.wiki.core.common.exception.document.DocumentNotFoundException
 import kr.flab.wiki.core.domain.document.Document
-import kr.flab.wiki.core.domain.user.User
-import java.time.LocalDateTime
 
 interface DocumentRepository {
     /**
@@ -23,5 +21,4 @@ interface DocumentRepository {
     fun findAllByTitle(title: String): MutableList<Document>
 
     fun findHistoryByTitle(title: String, fromRevision: Long, toRevision: Long): List<Document>
-
 }

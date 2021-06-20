@@ -4,7 +4,6 @@ import kr.flab.wiki.core.common.annotation.DomainService
 import kr.flab.wiki.core.domain.document.impl.DocumentServiceImpl
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 import kr.flab.wiki.core.domain.user.User
-import java.time.LocalDateTime
 
 @DomainService
 interface DocumentService {
