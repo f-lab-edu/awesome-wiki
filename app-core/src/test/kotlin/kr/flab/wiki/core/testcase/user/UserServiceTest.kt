@@ -6,19 +6,26 @@ import kr.flab.wiki.core.common.exception.user.UserEmailAlreadyExistException
 import kr.flab.wiki.core.common.exception.user.UserNameAlreadyExistException
 import kr.flab.wiki.core.common.exception.user.WrongUserEmailException
 import kr.flab.wiki.core.common.exception.user.WrongUserNameException
+import kr.flab.wiki.core.domain.document.repository.DocumentRepository
+import kr.flab.wiki.core.domain.document.repository.UserHistoryRepository
+import kr.flab.wiki.core.domain.user.User
 import kr.flab.wiki.core.domain.user.UserRegistrationPolicy
 import kr.flab.wiki.core.domain.user.UserService
 import kr.flab.wiki.core.domain.user.persistence.UserEntity
 import kr.flab.wiki.core.domain.user.repository.UserRepository
+import kr.flab.wiki.core.testlib.document.Documents
 import kr.flab.wiki.core.testlib.user.Users
+import kr.flab.wiki.lib.time.utcNow
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import java.time.temporal.TemporalField
 
 @Tag(TAG_TEST_UNIT)
 @DisplayName("UserService 의 동작 시나리오를 확인한다.")
@@ -28,13 +35,20 @@ class UserServiceTest {
 
     @Mock
     private lateinit var userRepo: UserRepository
+    @Mock
+    private lateinit var historyRepository: UserHistoryRepository
 
     private lateinit var sut: UserService
+    private val userName = faker.lorem().characters(
+        UserRegistrationPolicy.DEFAULT_MINIMUM_USER_NAME_LENGTH + 1,
+        UserRegistrationPolicy.DEFAULT_MAXIMUM_USER_NAME_LENGTH - 1
+    )
+    private val email = faker.internet().emailAddress()
 
     @BeforeEach
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        this.sut = UserService.newInstance(userRepo)
+        this.sut = UserService.newInstance(userRepo, userHistoryRepository = historyRepository)
     }
 
     @Nested
@@ -121,23 +135,39 @@ class UserServiceTest {
         }
     }
 
-    @Test
-    fun `올바른 파라미터를 입력하면 가입에 성공한다`() {
-        // given:
-        val userName = faker.lorem().characters(
-            UserRegistrationPolicy.DEFAULT_MINIMUM_USER_NAME_LENGTH + 1,
-            UserRegistrationPolicy.DEFAULT_MAXIMUM_USER_NAME_LENGTH - 1
-        )
-        val email = faker.internet().emailAddress()
 
-        // when:
-        `when`(userRepo.save(any())).thenAnswer { it.arguments[0] as UserEntity }
+    @Nested
+    inner class `사용자 등록 시` {
+        lateinit var user: User
 
-        // then:
-        val createdUser = sut.registerUser(userName, email)
+        @BeforeEach
+        fun setUp() {
+            `when`(userRepo.save(any())).thenAnswer { it.arguments[0] as UserEntity }
+            user = sut.registerUser(userName, email)
+        }
+        @Test
+        fun `올바른 파라미터를 입력하면 가입에 성공한다`() {
+            // then:
+            val createdUser = sut.registerUser(userName, email)
 
-        // expect:
-        assertThat(createdUser.userName, `is`(userName))
-        assertThat(createdUser.emailAddress, `is`(email))
+            // expect:
+            assertThat(createdUser.userName, `is`(userName))
+            assertThat(createdUser.emailAddress, `is`(email))
+        }
+
+        @Test
+        fun `문서 기여 리스트 조회시 생성내역 리턴`() {
+            val now = utcNow()
+            val yesterdayDoc = Documents.randomDocument(creator=user, createdAt = now.minusDays(1))
+            val todayDoc = Documents.randomDocument(creator=user, createdAt = now)
+            val futureDoc = Documents.randomDocument(creator=user, createdAt = now.plusDays(1))
+            val mockResult = listOf(yesterdayDoc, todayDoc, futureDoc)
+            val range = now.minusDays(1)..now
+            `when`(historyRepository.getHistory(user, range)).thenReturn(mockResult.filter { e -> e.createdAt in range })
+            val history = sut.getUserHistory(user, range);
+
+            assertThat(history[0], `is`(mockResult[0]))
+            assertThat(history[1], `is`(mockResult[1]))
+        }
     }
 }

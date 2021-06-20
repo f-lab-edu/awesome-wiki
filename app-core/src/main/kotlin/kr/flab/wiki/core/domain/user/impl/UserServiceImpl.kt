@@ -4,16 +4,20 @@ import kr.flab.wiki.core.common.exception.user.UserEmailAlreadyExistException
 import kr.flab.wiki.core.common.exception.user.UserNameAlreadyExistException
 import kr.flab.wiki.core.common.exception.user.WrongUserEmailException
 import kr.flab.wiki.core.common.exception.user.WrongUserNameException
+import kr.flab.wiki.core.domain.document.Document
+import kr.flab.wiki.core.domain.document.repository.UserHistoryRepository
 import kr.flab.wiki.core.domain.user.User
 import kr.flab.wiki.core.domain.user.UserRegistrationPolicy
 import kr.flab.wiki.core.domain.user.UserService
 import kr.flab.wiki.core.domain.user.persistence.UserEntity
 import kr.flab.wiki.core.domain.user.repository.UserRepository
 import kr.flab.wiki.lib.time.utcNow
+import java.time.LocalDateTime
 
 internal class UserServiceImpl(
     private val userRepo: UserRepository,
     private val registrationPolicy: UserRegistrationPolicy,
+    private val userHistoryRepo: UserHistoryRepository,
 ) : UserService {
     override fun isUserNameExist(userName: String): Boolean {
         return userRepo.findByUserName(userName) != null
@@ -51,5 +55,9 @@ internal class UserServiceImpl(
         )
 
         return this.userRepo.save(user)
+    }
+
+    override fun getUserHistory(user: User, range: ClosedRange<LocalDateTime>): List<Document> {
+        return userHistoryRepo.getHistory(user, range)
     }
 }
