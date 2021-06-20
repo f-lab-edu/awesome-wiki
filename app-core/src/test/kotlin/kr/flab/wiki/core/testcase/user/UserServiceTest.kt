@@ -6,7 +6,6 @@ import kr.flab.wiki.core.common.exception.user.UserEmailAlreadyExistException
 import kr.flab.wiki.core.common.exception.user.UserNameAlreadyExistException
 import kr.flab.wiki.core.common.exception.user.WrongUserEmailException
 import kr.flab.wiki.core.common.exception.user.WrongUserNameException
-import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 import kr.flab.wiki.core.domain.document.repository.UserHistoryRepository
 import kr.flab.wiki.core.domain.user.User
 import kr.flab.wiki.core.domain.user.UserRegistrationPolicy
@@ -22,10 +21,8 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
-import java.time.temporal.TemporalField
 
 @Tag(TAG_TEST_UNIT)
 @DisplayName("UserService 의 동작 시나리오를 확인한다.")
@@ -164,7 +161,7 @@ class UserServiceTest {
             val mockResult = listOf(yesterdayDoc, todayDoc, futureDoc)
             val range = now.minusDays(1)..now
             `when`(historyRepository.getHistory(user, range)).thenReturn(mockResult.filter { e -> e.createdAt in range })
-            val history = sut.getUserHistory(user, range);
+            val history = sut.findUserHistory(user, range);
 
             assertThat(history[0], `is`(mockResult[0]))
             assertThat(history[1], `is`(mockResult[1]))

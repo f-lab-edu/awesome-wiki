@@ -57,7 +57,7 @@ internal class UserServiceImpl(
         return this.userRepo.save(user)
     }
 
-    override fun getUserHistory(user: User, range: ClosedRange<LocalDateTime>): List<Document> {
+    override fun findUserHistory(user: User, range: ClosedRange<LocalDateTime>): List<Document> {
         return userHistoryRepo.getHistory(user, range)
     }
 }

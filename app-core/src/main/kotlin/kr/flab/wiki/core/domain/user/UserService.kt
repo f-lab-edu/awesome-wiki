@@ -15,7 +15,7 @@ interface UserService {
 
     fun registerUser(userName: String, emailAddress: String): User
 
-    fun getUserHistory(user: User, range: ClosedRange<LocalDateTime>): List<Document>
+    fun findUserHistory(user: User, range: ClosedRange<LocalDateTime>): List<Document>
     companion object {
         fun newInstance(
             userRepository: UserRepository,
