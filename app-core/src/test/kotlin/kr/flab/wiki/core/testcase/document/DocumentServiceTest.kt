@@ -5,6 +5,7 @@ import kr.flab.wiki.TAG_TEST_UNIT
 import kr.flab.wiki.core.common.exception.document.DocumentNotFoundException
 import kr.flab.wiki.core.common.exception.document.InvalidBodyException
 import kr.flab.wiki.core.common.exception.document.InvalidTitleException
+import kr.flab.wiki.core.domain.document.Document
 import kr.flab.wiki.core.common.exception.user.UserNameAlreadyExistException
 import kr.flab.wiki.core.domain.document.DocumentFormatPolicy
 import kr.flab.wiki.core.domain.document.DocumentService
@@ -95,21 +96,44 @@ class DocumentServiceTest {
             `when`(docsRepo.save(any())).thenAnswer { it.arguments[0] as DocumentEntity }
         }
 
-        @Test
-        fun `있다면 기존 내용을 수정할 수 있다`() {
-            // and:
-            val previousDocument = Documents.randomDocument(title = title)
+        @Nested
+        inner class 있다면 {
+            private val previousDocument = Documents.randomDocument(title = title, version = 1)
+            private lateinit var savedDocument: Document
+            @BeforeEach
+            fun setupWhen(){
+                // when:
+                `when`(docsRepo.findByTitle(title)).thenReturn(previousDocument)
+            }
+            @Test
+            fun `기존 내용을 수정할 수 있다`(){
+                // then:
+                savedDocument = sut.saveDocument(title, body, creator)
 
-            // when:
-            `when`(docsRepo.findByTitle(title)).thenReturn(previousDocument)
+                assertThat(savedDocument.version, `is`(not(1)))
 
-            // then:
-            val savedDocument = sut.saveDocument(title, body, creator)
+            }
+            @Test
+            fun `다른 유저가 기존 내용을 수정할 수 있다`(){
+                val otherCreator = Users.randomUser()
 
-            // expect:
-            assertThat(savedDocument.version, `is`(not(1)))
-            assertThat(savedDocument.title, `is`(title))
-            assertThat(savedDocument.title, `is`(previousDocument.title))
+                //then:
+                savedDocument = sut.saveDocument(title, body, otherCreator)
+                assertThat(savedDocument.creator, `is`(otherCreator))
+
+                assertThat(savedDocument.version, `is`(not(1)))
+
+            }
+            @Test
+            fun `기존 내용을 수정하고 버전이 1 증가한다`(){
+                savedDocument = sut.saveDocument(title, body, creator)
+                assertThat(savedDocument.version, `is`(2))
+            }
+            @AfterEach
+            fun afterEach(){
+                assertThat(savedDocument.title, `is`(title))
+                assertThat(savedDocument.title, `is`(previousDocument.title))
+            }
         }
 
         @Test

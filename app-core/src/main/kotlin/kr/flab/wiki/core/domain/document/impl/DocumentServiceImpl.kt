@@ -27,22 +27,13 @@ internal class DocumentServiceImpl(
 
         val document = docsRepo.findByTitle(title).let {
             val now = utcNow()
-            if (it == null) {
-                return@let DocumentEntity(
-                    title = title,
-                    body = body,
-                    creator = creator,
-                    createdAt = now,
-                    version = 1L
-                )
-            } else {
-                // TODO: 작성자 외의 사람도 편집 가능한지? 이걸 정책으로 뺄 수 있을지?
-
-                return it.apply {
-                    this.body = body
-                    this.version = ++version
-                }
-            }
+            return@let DocumentEntity(
+                title = title,
+                body = body,
+                creator = creator,
+                createdAt = now,
+                version = if (it == null) 1L else ++it.version
+            )
         }
 
         return this.docsRepo.save(document)
