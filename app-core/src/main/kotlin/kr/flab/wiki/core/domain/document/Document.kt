@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 @DomainModel
 interface Document {
+    //TODO Document 식별자는 title로 하는 건지? unique 식별자는 없는건지?
     val title: String
 
     var body: String
