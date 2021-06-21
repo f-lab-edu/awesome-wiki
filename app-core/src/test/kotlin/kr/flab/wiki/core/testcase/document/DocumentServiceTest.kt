@@ -119,7 +119,7 @@ class DocumentServiceTest {
 
                 //then:
                 savedDocument = sut.saveDocument(title, body, otherCreator)
-                assertThat(savedDocument.creator, `is`(otherCreator))
+                assertThat(savedDocument.lastContributor, `is`(otherCreator))
 
                 assertThat(savedDocument.version, `is`(not(1)))
 

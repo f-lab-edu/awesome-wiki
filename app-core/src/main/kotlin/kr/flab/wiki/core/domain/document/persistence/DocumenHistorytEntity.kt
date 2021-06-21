@@ -6,7 +6,6 @@ import kr.flab.wiki.core.domain.user.User
 import java.time.LocalDateTime
 
 internal class DocumentHistoryEntity(
-    override val masterTitle: String,
 
     override val title: String,
 
@@ -16,6 +15,5 @@ internal class DocumentHistoryEntity(
 
     override val createdAt: LocalDateTime,
 
-    override val version: Long,
 ) : DocumentHistory
 

@@ -21,8 +21,8 @@ object Documents {
         return randomDocument(
             title = title,
             body = body,
-            creator = creator,
-            createdAt = now,
+            lastContributor = creator,
+            updatedAt = now,
             version = 1L
         )
     }
@@ -30,8 +30,8 @@ object Documents {
     fun randomDocument(
         title: String? = null,
         body: String? = null,
-        creator: User? = null,
-        createdAt: LocalDateTime? = null,
+        lastContributor: User? = null,
+        updatedAt: LocalDateTime? = null,
         version: Long? = null
     ): Document {
         val faker = Faker.instance()
@@ -40,30 +40,26 @@ object Documents {
         return DocumentEntity(
             title = title ?: faker.lorem().word(),
             body = body ?: faker.lorem().paragraph(),
-            creator = creator ?: Users.randomUser(),
-            createdAt = createdAt ?: now,
+            lastContributor = lastContributor ?: Users.randomUser(),
+            updatedAt = updatedAt ?: now,
             version = version ?: faker.number().randomNumber(4, false)
         )
     }
 
     fun randomDocumentHistory(
-        masterTitle: String? = null,
         title: String? = null,
         body: String? = null,
         creator: User? = null,
         createdAt: LocalDateTime? = null,
-        version: Long? = null
     ): DocumentHistory {
         val faker = Faker.instance()
         val now = utcNow()
 
         return DocumentHistoryEntity(
-            masterTitle = masterTitle ?: faker.lorem().word(),
             title = title ?: faker.lorem().word(),
             body = body ?: faker.lorem().paragraph(),
             creator = creator ?: Users.randomUser(),
             createdAt = createdAt ?: now,
-            version = version ?: faker.number().randomNumber(4, false)
         )
     }
 }

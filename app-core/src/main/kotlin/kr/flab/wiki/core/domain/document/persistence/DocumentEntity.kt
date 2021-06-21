@@ -5,13 +5,13 @@ import kr.flab.wiki.core.domain.user.User
 import java.time.LocalDateTime
 
 internal class DocumentEntity(
-    override var title: String,
+    override val title: String,
 
     override var body: String,
 
-    override var creator: User,
+    override var lastContributor: User,
 
-    override var createdAt: LocalDateTime,
+    override var updatedAt: LocalDateTime,
 
     override var version: Long,
 ) : Document

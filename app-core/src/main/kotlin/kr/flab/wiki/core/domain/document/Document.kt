@@ -9,13 +9,13 @@ interface Document {
     /**
      * title은 Document의 식별자
      */
-    var title: String
+    val title: String
 
     var body: String
 
-    var creator: User
+    var lastContributor: User
 
-    var createdAt: LocalDateTime
+    var updatedAt: LocalDateTime
 
     var version: Long
 }

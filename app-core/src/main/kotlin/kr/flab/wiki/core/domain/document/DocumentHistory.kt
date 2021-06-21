@@ -6,20 +6,18 @@ import java.time.LocalDateTime
 
 @DomainModel
 interface DocumentHistory {
+
     /**
+     *
+     * 만약 해당 문서의 제목이 "한국"에서 "대한민국"으로 바뀌었다면, Document만으로 그 이력을 추적할 수 없으므로
+     * (Document에서는 식별자인 title이 다르면 다른 객체이므로)
+     * DocumentHistory 도메인이 필요하다.
+     *
      * DocumentHistory의 프로퍼티는 Document의 프로퍼티와 일치하지 않을 수 있다.
      *
      * 현재 스펙에서 이력의 변경에 대한 사항은 없으므로 val로 선언한다.
-     */
-
-    /**
-     * masterTitle : Document 식별자
      *
-     * History를 찾으려면 결국 Document 식별자를 알아야 하기 때문에 master document의 title을 추가했다.
-     * 근데 이러면 document의 title이 변경될 때마다 update가 필요하게 된다.
-     * 불필요한 update를 없애려면 document의 식별자는 고정된 값이 필요할 수도...?
      */
-    val masterTitle: String
 
     val title: String
 
@@ -29,5 +27,4 @@ interface DocumentHistory {
 
     val createdAt: LocalDateTime
 
-    val version: Long
 }
