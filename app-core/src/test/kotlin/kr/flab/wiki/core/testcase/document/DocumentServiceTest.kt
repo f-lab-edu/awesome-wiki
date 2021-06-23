@@ -2,8 +2,11 @@ package kr.flab.wiki.core.testcase.document
 
 import com.github.javafaker.Faker
 import kr.flab.wiki.TAG_TEST_UNIT
+import kr.flab.wiki.core.common.exception.document.DocumentNotFoundException
 import kr.flab.wiki.core.common.exception.document.InvalidBodyException
 import kr.flab.wiki.core.common.exception.document.InvalidTitleException
+import kr.flab.wiki.core.domain.document.Document
+import kr.flab.wiki.core.common.exception.user.UserNameAlreadyExistException
 import kr.flab.wiki.core.domain.document.DocumentFormatPolicy
 import kr.flab.wiki.core.domain.document.DocumentService
 import kr.flab.wiki.core.domain.document.persistence.DocumentEntity
@@ -93,21 +96,44 @@ class DocumentServiceTest {
             `when`(docsRepo.save(any())).thenAnswer { it.arguments[0] as DocumentEntity }
         }
 
-        @Test
-        fun `있다면 기존 내용을 수정할 수 있다`() {
-            // and:
-            val previousDocument = Documents.randomDocument(title = title)
+        @Nested
+        inner class 있다면 {
+            private val previousDocument = Documents.randomDocument(title = title, version = 1)
+            private lateinit var savedDocument: Document
+            @BeforeEach
+            fun setupWhen(){
+                // when:
+                `when`(docsRepo.findByTitle(title)).thenReturn(previousDocument)
+            }
+            @Test
+            fun `기존 내용을 수정할 수 있다`(){
+                // then:
+                savedDocument = sut.saveDocument(title, body, creator)
 
-            // when:
-            `when`(docsRepo.findByTitle(title)).thenReturn(previousDocument)
+                assertThat(savedDocument.version, `is`(not(1)))
 
-            // then:
-            val savedDocument = sut.saveDocument(title, body, creator)
+            }
+            @Test
+            fun `다른 유저가 기존 내용을 수정할 수 있다`(){
+                val otherCreator = Users.randomUser()
 
-            // expect:
-            assertThat(savedDocument.version, `is`(not(1)))
-            assertThat(savedDocument.title, `is`(title))
-            assertThat(savedDocument.title, `is`(previousDocument.title))
+                //then:
+                savedDocument = sut.saveDocument(title, body, otherCreator)
+                assertThat(savedDocument.creator, `is`(otherCreator))
+
+                assertThat(savedDocument.version, `is`(not(1)))
+
+            }
+            @Test
+            fun `기존 내용을 수정하고 버전이 1 증가한다`(){
+                savedDocument = sut.saveDocument(title, body, creator)
+                assertThat(savedDocument.version, `is`(2))
+            }
+            @AfterEach
+            fun afterEach(){
+                assertThat(savedDocument.title, `is`(title))
+                assertThat(savedDocument.title, `is`(previousDocument.title))
+            }
         }
 
         @Test
@@ -121,5 +147,96 @@ class DocumentServiceTest {
             // expect:
             assertThat(savedDocument.version, `is`(1))
         }
+    }
+
+    @Nested
+    inner class `제목을 검색했을 때` {
+
+        // given:
+        private val inputTitle = faker.lorem().word()
+
+        @Nested
+        inner class `입력된 제목을 포함하는 문서가` {
+
+            @Test
+            fun `존재하면 문서 리스트를 반환한다`() {
+
+                // when:
+                `when`(docsRepo.findAllByTitle(inputTitle)).thenReturn(
+                    mutableListOf(
+                        Documents.randomDocument(title = inputTitle + faker.lorem().word()),
+                        Documents.randomDocument(title = faker.lorem().word() + inputTitle),
+                        Documents.randomDocument(title = faker.lorem().word() + inputTitle + faker.lorem().word())
+                    )
+                )
+
+                // then:
+                val documents = sut.findDocumentsByTitle(inputTitle)
+
+                // expect:
+                assertThat(documents.all { document -> document.title.contains(inputTitle) }, `is`(true))
+
+            }
+
+            @Test
+            fun `존재하지 않는다면 빈 리스트를 반환한다`() {
+
+                // when:
+                `when`(docsRepo.findAllByTitle(inputTitle)).thenReturn(mutableListOf())
+
+                // then:
+                val documents = sut.findDocumentsByTitle(inputTitle)
+
+                // expect:
+                assertThat(documents.isEmpty(), `is`(true))
+
+            }
+
+        }
+
+    }
+
+    @Nested
+    inner class `문서 리스트 중 하나를 선택하면` {
+
+        // given:
+        private val chosenTitle = faker.lorem().word()
+
+        @Nested
+        inner class `선택한 문서가 존재하면` {
+
+            @Test
+            fun `선택한 문서를 반환한다`() {
+
+                // when:
+                `when`(docsRepo.getByTitle(chosenTitle)).thenReturn(Documents.randomDocument(title = chosenTitle))
+
+                // then:
+                val document = sut.getDocumentByTitle(chosenTitle)
+
+                // expect:
+                assertThat(document.title, `is`(chosenTitle))
+
+            }
+
+        }
+
+        @Nested
+        inner class `선택한 문서가 존재하지 않으면` {
+
+            @Test
+            fun `예외를 발생한다`() {
+
+                // when:
+                `when`(docsRepo.getByTitle(chosenTitle)).thenThrow(DocumentNotFoundException())
+
+                // expect:
+                assertThrows(DocumentNotFoundException::class.java) { sut.getDocumentByTitle(chosenTitle) }
+
+            }
+
+        }
+
+
     }
 }

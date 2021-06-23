@@ -27,24 +27,25 @@ internal class DocumentServiceImpl(
 
         val document = docsRepo.findByTitle(title).let {
             val now = utcNow()
-            if (it == null) {
-                return@let DocumentEntity(
-                    title = title,
-                    body = body,
-                    creator = creator,
-                    createdAt = now,
-                    updatedAt = now,
-                    version = 1L
-                )
-            } else {
-                return it.apply {
-                    this.body = body
-                    this.updatedAt = now
-                    this.version = ++version
-                }
-            }
+            return@let DocumentEntity(
+                title = title,
+                body = body,
+                creator = creator,
+                createdAt = now,
+                version = if (it == null) 1L else ++it.version
+            )
         }
 
         return this.docsRepo.save(document)
     }
+
+    override fun findDocumentsByTitle(title: String): MutableList<Document> {
+        return docsRepo.findAllByTitle(title)
+    }
+
+    override fun getDocumentByTitle(title: String): Document {
+        return docsRepo.getByTitle(title)
+    }
+
+
 }
