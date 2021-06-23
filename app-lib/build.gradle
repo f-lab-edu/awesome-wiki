@@ -8,4 +8,10 @@ jar {
 }
 
 dependencies {
+    // JSR 303: Bean validation
+    api "javax.validation:validation-api:$version_javax_validation"
+    // JSR 305: Annotations for Software Defect Detection
+    api "com.google.code.findbugs:jsr305:3.0.2"
+    // JSR-330: Dependency Injection for Java.
+    api "javax.inject:javax.inject:1"
 }

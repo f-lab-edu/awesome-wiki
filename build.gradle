@@ -5,6 +5,13 @@ buildscript {
         // lang
         version_target_jvm = 13
         version_kotlin = "1.4.32"
+        version_javax_validation = "2.0.1.Final"
+
+        // Spring + infrastructure
+        version_springBoot = "2.5.1"
+
+        // Library
+        version_jackson_kotlin = "2.12.3"
 
         // Testing & Code quality
         version_junit5 = "5.7.1"
@@ -23,10 +30,16 @@ buildscript {
         jcenter()
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.spring.io/plugins-release" }
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$version_kotlin"
+
+        // Spring
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$version_springBoot"
+        // https://kotlinlang.org/docs/reference/compiler-plugins.html
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$version_kotlin"
 
         // Testing & Code quality
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$version_detekt"

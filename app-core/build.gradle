@@ -3,6 +3,10 @@ apply from: "$project.rootDir/buildScripts/kotlin.gradle"
 apply from: "$project.rootDir/buildScripts/testing.gradle"
 apply from: "$project.rootDir/buildScripts/jacoco.gradle"
 
+jar {
+    enabled = true
+}
+
 dependencies {
     implementation project(":app-lib")
 
