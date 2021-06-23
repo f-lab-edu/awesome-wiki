@@ -3,4 +3,4 @@ package kr.flab.wiki.app.type.annotation
 @Target(AnnotationTarget.CLASS, AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-annotation class ApiRequest()
+annotation class ApiRequest

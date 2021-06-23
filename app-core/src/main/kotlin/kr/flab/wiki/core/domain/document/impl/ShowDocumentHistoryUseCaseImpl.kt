@@ -6,7 +6,7 @@ import kr.flab.wiki.core.domain.document.usecases.ShowDocumentHistoryUseCase
 
 class ShowDocumentHistoryUseCaseImpl(
     private val documentRepository: DocumentRepository
-) : ShowDocumentHistoryUseCase{
+) : ShowDocumentHistoryUseCase {
     override fun findDocumentHistory(title: String): MutableList<DocumentHistory> {
         return documentRepository.findAllHistoryByTitle(title)
     }

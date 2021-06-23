@@ -46,6 +46,4 @@ internal class DocumentServiceImpl(
     override fun getDocumentByTitle(title: String): Document {
         return docsRepo.getByTitle(title)
     }
-
-
 }

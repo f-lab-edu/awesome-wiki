@@ -5,12 +5,12 @@ import kr.flab.wiki.core.domain.document.impl.ShowDocumentHistoryUseCaseImpl
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 
 interface ShowDocumentHistoryUseCase {
-    fun findDocumentHistory(title : String) : MutableList<DocumentHistory>
+    fun findDocumentHistory(title: String): MutableList<DocumentHistory>
 
     companion object {
         fun newInstance(
-           documentRepository: DocumentRepository
-        ) : ShowDocumentHistoryUseCase {
+            documentRepository: DocumentRepository
+        ): ShowDocumentHistoryUseCase {
             return ShowDocumentHistoryUseCaseImpl(documentRepository)
         }
     }

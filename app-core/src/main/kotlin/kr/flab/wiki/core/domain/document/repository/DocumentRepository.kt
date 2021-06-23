@@ -20,6 +20,6 @@ interface DocumentRepository {
     fun save(document: Document): Document
 
     fun findAllByTitle(title: String): MutableList<Document>
-    
+
     fun findAllHistoryByTitle(title: String): MutableList<DocumentHistory>
 }

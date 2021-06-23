@@ -34,7 +34,7 @@ private val UNICODE_BLANK_CHARS: Set<Char> = setOf(
     '\u200A', // HAIR SPACE
     '\u202F', // NARROW NO-BREAK SPACE
     '\u205F', // MEDIUM MATHEMATICAL SPACE
-    '\u3000'  // IDEOGRAPHIC SPACE
+    '\u3000', // IDEOGRAPHIC SPACE
 )
 
 @SuppressWarnings("ReturnCount")
@@ -42,12 +42,10 @@ fun String?.isNullOrUnicodeBlank(): Boolean {
     if (isNullOrBlank()) {
         return true
     }
-
     this.forEach {
         if (!UNICODE_BLANK_CHARS.contains(it)) {
             return false
         }
     }
-
     return true
 }
