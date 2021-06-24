@@ -30,8 +30,8 @@ internal class DocumentServiceImpl(
             return@let DocumentEntity(
                 title = title,
                 body = body,
-                creator = creator,
-                createdAt = now,
+                lastContributor = creator,
+                updatedAt = now,
                 version = if (it == null) 1L else ++it.version
             )
         }
@@ -46,6 +46,4 @@ internal class DocumentServiceImpl(
     override fun getDocumentByTitle(title: String): Document {
         return docsRepo.getByTitle(title)
     }
-
-
 }

@@ -6,14 +6,16 @@ import java.time.LocalDateTime
 
 @DomainModel
 interface Document {
-    //TODO Document 식별자는 title로 하는 건지? unique 식별자는 없는건지?
+    /**
+     * title은 Document의 식별자
+     */
     val title: String
 
     var body: String
 
-    var creator: User
+    var lastContributor: User
 
-    val createdAt: LocalDateTime
+    var updatedAt: LocalDateTime
 
     var version: Long
 }
