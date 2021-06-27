@@ -1,4 +1,10 @@
 apply plugin: "kotlin"
+/*
+ * 아래 두개 플러그인은 kotlin 언어의 기본 디자인 (모든 클래스는 기본적으로 final) 때문에
+ * 스프링이 proxy 를 만들지 못하는 문제를 해결해 준다.
+ */
+apply plugin: "kotlin-spring"
+apply plugin: "kotlin-allopen"
 
 compileKotlin {
     kotlinOptions.jvmTarget = "$version_target_jvm"

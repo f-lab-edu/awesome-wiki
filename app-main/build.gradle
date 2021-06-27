@@ -1,4 +1,5 @@
-apply plugin: "application"
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
 
 apply from: "$project.rootDir/buildScripts/java.gradle"
 apply from: "$project.rootDir/buildScripts/kotlin.gradle"
@@ -6,12 +7,9 @@ apply from: "$project.rootDir/buildScripts/testing.gradle"
 apply from: "$project.rootDir/buildScripts/jacoco.gradle"
 apply from: "$project.rootDir/buildScripts/packaging.gradle"
 
-application {
-    mainClassName = 'MainKt'
-}
-
 sourceSets {
     def buildConfig = getBuildConfig()
+    println("Building JAR for '$buildConfig' environment")
 
     main {
         java {
@@ -28,6 +26,37 @@ dependencies {
     implementation project(":app-core")
     implementation project(":app-lib")
 
+    // Spring boot
+    implementation "org.springframework.boot:spring-boot-starter:$version_springBoot"
+    implementation "org.springframework.boot:spring-boot-starter-web:$version_springBoot"
+
+    // Jackson Kotlin support
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$version_jackson_kotlin"
+
+    // IntelliJ 에서 custom config property 제대로 못 읽는 문제 해결
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:$version_springBoot"
+
     testImplementation project(path: ":app-core", configuration: "testArtifacts")
     testImplementation project(path: ":app-lib", configuration: "testArtifacts")
 }
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:$version_springBoot"
+    }
+}
+
+task copyCoreResources(type: Copy) {
+    final coreProjectName = "app-core"
+    final thisProjectName = "app-main"
+    final buildVariants = ["main"]
+
+    buildVariants.forEach {
+        from "$project.rootDir/$coreProjectName/src/$it/resources/"
+        into "$project.rootDir/$thisProjectName/build/resources/$it"
+    }
+}
+
+jar.dependsOn bootJar
+// This step resolves resource copy problem which only exists on other('common') module
+classes.dependsOn copyCoreResources

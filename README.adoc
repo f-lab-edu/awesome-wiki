@@ -22,6 +22,50 @@ Spring framework 를 이용한 다중 접속 애플리케이션에서 발생하�
 
 최대한 효율적으로 TDD 를 연습하기 위해 link:{link-todo-sheets}[할 일 목록 Google sheets] 와 link:{link-todo-issues}[Issue Kanban board] 를 적극 활용하고 있습니다.
 
+[[how-to-build]]
+=== 빌드하기
+[source,shell script]
+----
+$ gradlew :app-main:assemble {-PbuildConfig=[LOCAL, ALPHA, BETA, RELEASE]}
+----
+`buildConfig` 를 명시하지 않으면 기본적으로 `local` 프로파일로 빌드합니다.
+
+또한 빌드 프로파일 변경시 아래와 같은 오류가 발생할 경우, `clean` task 를 추가해서 clean build 를 해야 합니다.
+
+[source,shell script]
+----
+e: app-main/src/alpha/kotlin/kr/flab/wiki/app/AppConfig.kt: (5, 8): Redeclaration: AppConfig
+e: app-main/src/local/kotlin/kr/flab/wiki/app/AppConfig.kt: (5, 8): Redeclaration: AppConfig
+
+$ gradlew :app-main:assemble -PbuildConfig=ALPHA
+...
+
+BUILD SUCCESSFUL in 266ms
+3 actionable tasks: 3 executed
+----
+
+[[how-to-run]]
+=== 실행하기
+<<how-to-build>> 단락의 내용대로 `app-main` 모듈을 빌드하면 단독 실행가능한 Spring boot application JAR 파일이 생깁니다. 이 파일은 `app-main/build/libs` 디렉토리 아래에 다음과 같이 생성됩니다.
+
+[source,shell script]
+----
+$ ll app-main/build/libs
+total 24M
+-rw-rw-r-- 1 user user 24M Jun 23 18:18 app-main.jar
+-rw-rw-r-- 1 user user 14K Jun 23 18:18 app-main-plain.jar
+----
+
+실행 방법은 JAR 파일을 그냥 실행하는것과 동일합니다. 아래와 같이 하면 됩니다.
+
+[source,shell script]
+----
+$ java -jar app-main/build/libs/app-main.jar
+----
+
+주의: 커맨드를 실행하는 실행 경로에 `application.yml` 파일이 있어야 합니다.
+또한 파일 템플릿은 link:application.yml.sample[application.yml.sample] 을 참고하시기 바랍니다.
+
 [[running-tests]]
 === 테스트 실행
 이 프로젝트에서는 Unit / Integration / End to end 테스트들을 종류별로 구분해 구현하고 있습니다. 테스트들은 martinFowler.com 의 link:https://martinfowler.com/articles/practical-test-pyramid.html[The practical test pyramid] 라는 글에 따라 규모별로 구분하고 있으모, 각 테스트를 실행하는 gradle task 명은 아래와 같습니다.
