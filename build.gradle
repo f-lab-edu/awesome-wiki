@@ -10,8 +10,15 @@ buildscript {
         // Spring + infrastructure
         version_springBoot = "2.5.1"
 
+        // Spring Security
+        version_springSecurity = "2.4.2"
+
+        // Spring boot Test
+        version_springBootTest = "2.5.1"
+
         // Library
         version_jackson_kotlin = "2.12.3"
+        version_jjwt = "0.11.1"
 
         // Testing & Code quality
         version_junit5 = "5.7.1"
@@ -21,6 +28,7 @@ buildscript {
         version_hamcrest = "2.2"
         version_mockito = "3.8.0"
         version_mockitoKotlin = "3.2.0"
+        version_restAssured = "4.4.0"
 
         // Automatic documentation
         version_asciidoctor_gradle = "3.3.2"

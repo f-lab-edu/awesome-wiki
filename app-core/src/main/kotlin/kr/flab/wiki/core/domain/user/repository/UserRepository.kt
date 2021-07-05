@@ -2,6 +2,7 @@ package kr.flab.wiki.core.domain.user.repository
 
 import kr.flab.wiki.core.common.exception.user.UserNotFoundException
 import kr.flab.wiki.core.domain.user.User
+import kr.flab.wiki.core.domain.user.impl.UserRepositoryImpl
 
 interface UserRepository {
     /**
@@ -20,4 +21,10 @@ interface UserRepository {
     fun save(user: User): User
 
     fun findUserByEmailAndPassword(email: String, password: String): User?
+
+    companion object {
+        fun newInstance(): UserRepository {
+            return UserRepositoryImpl()
+        }
+    }
 }

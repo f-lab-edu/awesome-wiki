@@ -21,6 +21,8 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest:$version_hamcrest"
     testImplementation "org.mockito:mockito-core:$version_mockito"
     testImplementation "org.mockito.kotlin:mockito-kotlin:$version_mockitoKotlin"
+    testImplementation "io.rest-assured:rest-assured:$version_restAssured"
+
 }
 
 check.dependsOn test
