@@ -21,9 +21,16 @@ buildscript {
         version_hamcrest = "2.2"
         version_mockito = "3.8.0"
         version_mockitoKotlin = "3.2.0"
+        version_spock_groovy = "3.0.8"
+        version_spock = "2.0-groovy-3.0"
+        version_restDocs = "2.0.5.RELEASE"
 
         // Automatic documentation
         version_asciidoctor_gradle = "3.3.2"
+        /*
+         * Spring 공식문서에서는 1.5.9.2 소개하고 있는데 실제로는 1.6.1 적용해야 문제가 없다.
+         */
+        version_asciidoctor_gradle_plugin = "1.6.1"
     }
 
     repositories {
@@ -44,6 +51,7 @@ buildscript {
         // Testing & Code quality
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$version_detekt"
         classpath "org.asciidoctor:asciidoctor-gradle-jvm:$version_asciidoctor_gradle"
+        classpath "org.asciidoctor:asciidoctor-gradle-plugin:$version_asciidoctor_gradle_plugin"
     }
 }
 

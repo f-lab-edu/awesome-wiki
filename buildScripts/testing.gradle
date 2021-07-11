@@ -29,6 +29,10 @@ configurations {
     testArtifacts.extendsFrom testRuntime
 }
 
+/**
+ * 이 Task 는 test directory 의 구현들 (특히 test lib) 을 JAR 로 export 하도록 도와줍니다.
+ * Multi module 로 나뉜 프로젝트들에서 test util 들을 공유하기 위해 반드시 선언해야 하는 task 입니다.
+ */
 task testJar(type: Jar) {
     classifier "test"
     from sourceSets.test.output

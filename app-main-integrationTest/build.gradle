@@ -1,0 +1,90 @@
+apply plugin: "groovy"
+apply plugin: "org.asciidoctor.convert"
+
+apply from: "$project.rootDir/buildScripts/java.gradle"
+apply from: "$project.rootDir/buildScripts/kotlin.gradle"
+
+def groovyVersion = "$version_spock_groovy"
+def spockVersion = "$version_spock"
+
+sourceSets {
+    integrationTest {
+        final srcBase = "src/integrationTest"
+        java {
+            srcDirs srcDirs = [srcDirs, "$srcBase/groovy", "$srcBase/java"]
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+        }
+
+        resources {
+            srcDirs srcDirs = [srcDirs, "$srcBase/resources"]
+        }
+    }
+}
+
+idea {
+    module {
+        testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
+        testResourceDirs += project.sourceSets.integrationTest.resources.srcDirs
+        scopes.TEST.plus += [configurations.integrationTestCompile]
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+task integrationTest(type: Test) {
+    description "Runs the integration tests."
+    group "verification"
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+    mustRunAfter test
+}
+
+check.dependsOn integrationTest
+
+dependencies {
+    integrationTestImplementation project(":app-lib")
+    integrationTestImplementation project(":app-core")
+    integrationTestImplementation project(":app-main")
+
+    // lang
+    integrationTestImplementation "org.codehaus.groovy:groovy-all:$groovyVersion"
+
+    // Spring boot test libs
+    integrationTestImplementation "org.springframework.boot:spring-boot-starter-test:$version_springBoot"
+    integrationTestImplementation "org.springframework.restdocs:spring-restdocs-core:$version_restDocs"
+    integrationTestImplementation "org.springframework.restdocs:spring-restdocs-restassured:$version_restDocs"
+    integrationTestImplementation "org.springframework.restdocs:spring-restdocs-asciidoctor:$version_restDocs"
+
+    // spock framework
+    integrationTestImplementation "org.spockframework:spock-core:$spockVersion"
+    integrationTestImplementation "org.spockframework:spock-spring:$spockVersion"
+
+    // spock mock support
+    integrationTestRuntimeOnly "cglib:cglib-nodep:3.2.4"
+    integrationTestRuntimeOnly "net.bytebuddy:byte-buddy:1.6.5"
+    integrationTestRuntimeOnly "org.objenesis:objenesis:2.5.1"
+
+    integrationTestImplementation project(path: ":app-lib", configuration: "testArtifacts")
+    integrationTestImplementation project(path: ":app-main", configuration: "testArtifacts")
+}
+
+asciidoctor {
+    inputs.dir "${project.buildDir}/generated-snippets"
+    /*
+     * 이 옵션이 잘 동작하지 않아 Windows 환경에서 인코딩 문제로 빌드가 잘 되지 않을 때는
+     * "제어판" > "[고급]" > "환경설정..." 에 들어가서 아래 환경 변수를 추가해주세요.
+     *
+     * set JAVA_OPTS=-Dfile.encoding=UTF-8
+     * set GRADLE_OPTS=-Dfile.encoding=UTF-8
+     *
+     * 그리고 시스템을 재부팅 해야 합니다.
+     */
+    options.encoding = "UTF-8"
+    dependsOn test
+}
