@@ -20,4 +20,5 @@ bin/
 hs_err_pid*
 
 # Prevent configuration files are checked into SCM
-application.yml
+/application.yml
+/application-*.yml

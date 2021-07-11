@@ -1,5 +1,31 @@
 # Application 설정 예시 파일입니다. 버전 컨트롤에 민감한 정보를 체크인 하는 것을 방지하기 위해
 # 기본 설정만 있는 템플릿 파일 형태로 만들었습니다.
 # 추후 이 디렉토리에 이 sample 파일을 기반으로 application.yml 파일을 만들어서 넣어 주세요.
+server:
+  error:
+    whitelabel:
+      enabled: false
+
 logging:
   level:
+
+spring:
+  main:
+    # 외부 bean 들과 충돌이 발생할 경우 우리가 선언하는 bean 들이 충돌을 override 하는 대신 문제를 일으키도록 합니다.
+    # 다소 불편하더라도 이렇게 설정함으로써 사전에 문제를 예방하고 해당 라이브러리의 문서를 검색해서 해결할 수 있습니다.
+    #
+    # 왜냐하면 bean 생성은 런타임에 이뤄지기 때문입니다.
+    # 그리고 이 옵션 활성화로 인한 문제 발생시 문제의 원인이 라이브러리인지,
+    # 아니면 스프링이 지원하는 각종 bean 생성방식을 이용한 우리 bean 로직의 문제인지... 등,
+    # 원인 추적이 매우 어렵습니다. 따라서 이 옵션은 가급적 false 로 두는게 좋습니다.
+    allow-bean-definition-overriding: false
+  application:
+    name: awesome-wiki
+  profiles:
+    # 비어있을 경우 'default'
+    active:
+  web:
+    resources:
+      add-mappings: false
+  mvc:
+    throw-exception-if-no-handler-found: true

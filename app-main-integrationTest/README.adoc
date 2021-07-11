@@ -1,0 +1,15 @@
+= app-main-integrationTest
+
+[[overview]]
+== 개요
+
+Spring application 을 구현한 `app-main` 모듈의 통합 테스트를 실행하기 위한 모듈입니다.
+
+통합 테스트는 표현력이 좀더 유연한 Spock framework 을 이용해 작성합니다. 또한 통합 테스트 실행 결과로 자동 documentation 을 생성하는 Spring RESTDocs 도 함께 적용했습니다.
+
+자동 생성 문서는 `build/asciidoc` 디렉토리 아래에 생성됩니다.
+
+플러그인 설정 및 문서 생성방법에 대한 자세한 내용은 link:https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[Spring 공식문서] 를 참고하시기 바랍니다.
+
+=== 주의사항
+Gradle groovy plugin 에서 kotlin class 를 잘 참조하지 못하는 문제가 있으므로, test helper 는 java 언어로 작성해주세요.

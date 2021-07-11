@@ -1,0 +1,16 @@
+= awesome-wiki API documentation
+
+[[overview]]
+== 개요
+API 문서 템플릿 (추후 수정해주세요)
+
+[[data-types]]
+== 공통 데이터 타입 목록
+
+// include::fragments/CommonPayloads.adoc[]
+
+[[api-operations]]
+== API 목록
+
+// include::fragments/ApiOperations.adoc[]
+
