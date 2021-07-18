@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(path = [Path.DOCUMENT], produces = ["application/json"])
 @ApiHandler
 class FindDocumentsByTitle(private val documentService: DocumentService) {
-    @GetMapping
+    @GetMapping("/find")
     fun onRequest(@RequestParam(value = "title") title: String): List<Document> {
         return documentService.findDocumentsByTitle(title)
     }
