@@ -43,14 +43,15 @@ class MySqlDocumentRepository(
 
     override fun save(document: Document): Document {
         jdbcTemplate.update(
-            "INSERT INTO ${Document.name}" +
-                    " (" +
-                    "$title, " +
-                    "$body, " +
-                    "${MySqlUserRepository.userName}, " +
-                    "$updatedAt, " +
-                    "$version)" +
-                    " VALUES (?,?,?,?,?)",
+            """INSERT INTO ${Document.name} 
+                    (
+                    $title,
+                    $body,
+                    ${MySqlUserRepository.userName}
+                    $updatedAt
+                    $version
+                    )
+                   VALUES (?,?,?,?,?)""",
             document.title,
             document.body,
             document.lastContributor.userName,

@@ -34,13 +34,13 @@ class MySqlUserRepository(
 
     override fun save(user: User): User {
         jdbcTemplate.update(
-            "INSERT INTO ${User.name} " +
-                    "(" +
-                    "$userName, " +
-                    "$emailAddress, " +
-                    "$registeredAt, " +
-                    "$lastActiveAt) " +
-                    "values (?,?,?,?)",
+            """INSERT INTO ${User.name}
+                    (
+                    $userName,
+                    $emailAddress,
+                    $registeredAt,
+                    $lastActiveAt
+                    ) values (?,?,?,?)""",
             user.userName,
             user.emailAddress,
             user.registeredAt,
