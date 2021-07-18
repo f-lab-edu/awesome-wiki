@@ -7,21 +7,32 @@ import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.*
-import org.mockito.MockitoAnnotations
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import io.restassured.RestAssured.*
+import io.restassured.builder.RequestSpecBuilder
+import io.restassured.config.LogConfig
+import io.restassured.config.RestAssuredConfig
+import io.restassured.filter.log.LogDetail
+import io.restassured.http.ContentType
+import io.restassured.module.kotlin.extensions.Given
+import io.restassured.module.kotlin.extensions.Then
+import io.restassured.module.kotlin.extensions.When
+import io.restassured.specification.RequestSpecification
 import kr.flab.wiki.TAG_TEST_E2E
-import kr.flab.wiki.core.domain.user.repository.UserRepository
+import kr.flab.wiki.app.components.authentication.UserAuthentication
 import kr.flab.wiki.core.testlib.user.Users
+import org.mockito.MockitoAnnotations
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.mock.mockito.MockBean
 
 @Tag(TAG_TEST_E2E)
 @DisplayName("스프링 시큐리티와 JWT를 사용한 로그인 시나리오를 확인한다.")
 @Suppress("ClassName", "NonAsciiCharacters") // 테스트 표현을 위한 한글 사용
 @ExtendWith(SpringExtension::class)
-@SpringBootTest
+@SpringBootTest(
+    properties = ["baseUri=http://localhost", "port=8080"],
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
+)
 class LoginWithSpringSecurityAndJwtTest {
 
     /** 유저 로그인 시나리오
@@ -42,15 +53,37 @@ class LoginWithSpringSecurityAndJwtTest {
      */
 
     private val faker = Faker.instance()
+    private lateinit var objectMapper: ObjectMapper
 
     @MockBean
-    private lateinit var userRepository: UserRepository
-    private lateinit var objectMapper: ObjectMapper
+    private lateinit var userAuthentication: UserAuthentication
+
+    @Value("\${port}")
+    private var port: Int = 0
+
+    @Value("\${baseUri}")
+    private lateinit var baseUri: String
+
+    private lateinit var requestSpecification: RequestSpecification
 
     @BeforeEach
     fun setup() {
         MockitoAnnotations.openMocks(this)
         this.objectMapper = jacksonObjectMapper()
+        /**
+         * 다음 코드는 rest assured 에서 log 범위를 설정합니다.
+         */
+        val logConfiguration = LogConfig.logConfig()
+            .enableLoggingOfRequestAndResponseIfValidationFails(LogDetail.ALL)
+        val restAssuredConfig = RestAssuredConfig.config().logConfig(logConfiguration)
+
+        this.requestSpecification = RequestSpecBuilder()
+            .setBaseUri(baseUri)
+            .setPort(port)
+            .setAccept(ContentType.JSON)
+            .setContentType(ContentType.JSON)
+            .setConfig(restAssuredConfig)
+            .build()
     }
 
     @Nested
@@ -75,59 +108,59 @@ class LoginWithSpringSecurityAndJwtTest {
 
             @Nested
             inner class 유효하면 {
+
                 @BeforeEach
                 fun setup() {
-                    `when`(userRepository.findUserByEmailAndPassword(email, password))
+                    `when`(userAuthentication.authenticateUser(email, password))
                         .thenReturn(Users.randomUser(emailAddress = email))
                 }
+
                 @Test
                 fun `토큰을 반환한다`() {
 
-                    given()
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(objectMapper.writeValueAsString(body))
-                        .`when`()
-                        .post("/login")
-                        .then()
-                        .log().all()
-                        .statusCode(200)
-                        .assertThat()
-                        .body("email", equalTo(email))
-                        .body("token", notNullValue())
+                    Given {
+                        spec(requestSpecification)
+                        body(objectMapper.writeValueAsString(body))
+                    } When {
+                        post("/login")
+                    } Then {
+                        statusCode(200)
+                        body("email", equalTo(email))
+                        body("token", notNullValue())
+                        log().all()
+                    }
 
                 }
 
             }
 
             /**
-             * repository 에서 null 을 반환하도록 mocking 했는데, 정상적인 email, token값을 반환하는 현상 발생.
-             * 원인을 찾고 있음.
+             * @SpringBootTest 에서도 MockBean 정상 동작 확인.
+             * https://github.com/spring-projects/spring-boot/issues/12470
+             * 위 issue에서 mockbean reset 시 @SpringBootTest 어노테이션을 Nested 클래스마다 선언하여
+             * Spring context를 분리할 수 있음을 확인하였으나, 현재 테스트에선 딱히 그러지 않아도 mocking 이 잘 된다.
              */
 
-            @Disabled
             @Nested
             inner class `유효하지 않으면` {
                 @BeforeEach
                 fun setup() {
-                    `when`(userRepository.findUserByEmailAndPassword(email, password))
+                    `when`(userAuthentication.authenticateUser(email, password))
                         .thenReturn(null)
                 }
-                @Test
-                fun `null 을 반환한다`() {
 
-                    given()
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(objectMapper.writeValueAsString(body))
-                        .`when`()
-                        .post("/login")
-                        .then()
-                        .log().all()
-                        .statusCode(400)
-                        .assertThat()
-                        .body("email", `is`(nullValue()))
-                        .body("token", `is`(nullValue()))
+                @Test
+                fun `400 을 반환한다`() {
+
+                    Given {
+                        spec(requestSpecification)
+                        body(objectMapper.writeValueAsString(body))
+                    } When {
+                        post("/login")
+                    } Then {
+                        statusCode(400)
+                        log().all()
+                    }
 
                 }
 

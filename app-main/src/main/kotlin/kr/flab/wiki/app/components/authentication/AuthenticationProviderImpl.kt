@@ -9,13 +9,12 @@ class AuthenticationProviderImpl(
     private val userAuthentication: UserAuthentication
 ) : AuthenticationProvider {
     override fun authenticate(authentication: Authentication?): Authentication {
-        val email: String = authentication?.name.toString()
-        val password: String = authentication?.credentials.toString()
+        val user: User = userAuthentication.authenticateUser(
+            authentication?.name.toString(),
+            authentication?.credentials.toString()
+        ) ?: return UsernamePasswordAuthenticationToken(null, null)
 
-        val user: User = userAuthentication.authenticateUser(email, password)
-            ?: return UsernamePasswordAuthenticationToken(null, null)
-
-        return UsernamePasswordAuthenticationToken(user.emailAddress, password)
+        return UsernamePasswordAuthenticationToken(user.emailAddress, null)
     }
 
     override fun supports(authentication: Class<*>?): Boolean {

@@ -22,6 +22,8 @@ dependencies {
     testImplementation "org.mockito:mockito-core:$version_mockito"
     testImplementation "org.mockito.kotlin:mockito-kotlin:$version_mockitoKotlin"
     testImplementation "io.rest-assured:rest-assured:$version_restAssured"
+    testImplementation "io.rest-assured:kotlin-extensions:$version_restAssuredKotlin"
+
 
 }
 
