@@ -6,7 +6,6 @@ import kr.flab.wiki.core.common.exception.document.DocumentNotFoundException
 import kr.flab.wiki.core.common.exception.document.InvalidBodyException
 import kr.flab.wiki.core.common.exception.document.InvalidTitleException
 import kr.flab.wiki.core.domain.document.Document
-import kr.flab.wiki.core.common.exception.user.UserNameAlreadyExistException
 import kr.flab.wiki.core.domain.document.DocumentFormatPolicy
 import kr.flab.wiki.core.domain.document.DocumentService
 import kr.flab.wiki.core.domain.document.persistence.DocumentEntity

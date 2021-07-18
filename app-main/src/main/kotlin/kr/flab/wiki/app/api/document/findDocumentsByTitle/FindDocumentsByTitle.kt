@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @ApiHandler
 class FindDocumentsByTitle(private val documentService: DocumentService) {
     @GetMapping
-    fun onRequest(@RequestParam(value = "title") title: String): MutableList<Document> {
+    fun onRequest(@RequestParam(value = "title") title: String): List<Document> {
         return documentService.findDocumentsByTitle(title)
     }
 }
