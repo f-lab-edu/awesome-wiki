@@ -22,7 +22,7 @@ class MySqlDocumentRepository(
 
     val mapper = RowMapper { rs: ResultSet, _: Int ->
         val user = jdbcTemplate.queryForObject(
-            "select * from User where userName = ?",
+            "SELECT * FROM User WHERE userName = ?",
             MySqlUserRepository.getUserMapper(),
             rs.getString(MySqlUserRepository.userName)
         )
@@ -37,20 +37,20 @@ class MySqlDocumentRepository(
 
     override fun findByTitle(title: String): Document? {
         return jdbcTemplate.queryForObject(
-            "select * from ${Document.name} where ${MySqlDocumentRepository.title} = ?", mapper, title
+            "SELECT * FROM ${Document.name} WHERE ${MySqlDocumentRepository.title} = ?", mapper, title
         )
     }
 
     override fun save(document: Document): Document {
         jdbcTemplate.update(
-            "insert into ${Document.name}" +
+            "INSERT INTO ${Document.name}" +
                     " (" +
                     "$title, " +
                     "$body, " +
                     "${MySqlUserRepository.userName}, " +
                     "$updatedAt, " +
                     "$version)" +
-                    " values (?,?,?,?,?)",
+                    " VALUES (?,?,?,?,?)",
             document.title,
             document.body,
             document.lastContributor.userName,
@@ -61,7 +61,7 @@ class MySqlDocumentRepository(
     }
 
     override fun findAllByTitle(title: String): MutableList<Document> {
-        return jdbcTemplate.query("select * from ${Document.name} where $title = ?", mapper, title)
+        return jdbcTemplate.query("SELECT * FROM ${Document.name} WHERE $title = ?", mapper, title)
     }
 
     override fun findAllHistoryByTitle(title: String): MutableList<DocumentHistory> {

@@ -18,7 +18,7 @@ class MySqlUserRepository(
 
     override fun findByUserName(userName: String): User? {
         return jdbcTemplate.queryForObject(
-            "select * from ${User.name} where ${MySqlUserRepository.userName} = ?",
+            "SELECT * FROM ${User.name} WHERE ${MySqlUserRepository.userName} = ?",
             mapper,
             userName
         )
@@ -26,7 +26,7 @@ class MySqlUserRepository(
 
     override fun findByEmail(email: String): User? {
         return jdbcTemplate.queryForObject(
-            "select * from ${User.name} where $emailAddress = ?",
+            "SELECT * FROM ${User.name} WHERE $emailAddress = ?",
             mapper,
             email
         )
@@ -34,7 +34,7 @@ class MySqlUserRepository(
 
     override fun save(user: User): User {
         jdbcTemplate.update(
-            "insert into ${User.name} " +
+            "INSERT INTO ${User.name} " +
                     "(" +
                     "$userName, " +
                     "$emailAddress, " +
