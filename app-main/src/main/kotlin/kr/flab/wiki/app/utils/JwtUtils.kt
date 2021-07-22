@@ -12,7 +12,7 @@ class JwtUtils private constructor() {
         private const val EXPIRATION_TIME: Long = 1 * 1 * 30 * 60 * 1000
         /**
          * 해당 키페어는 서버 시작할 때마다 재생성됩니다.
-         * 추후에는 미리 생성한 후 설정파일(ex : application-*.yml)에서 읽어드릴 예정입니다.
+         * 추후에는 미리 생성한 후 설정파일(ex : application-*.yml)에서 읽어들일 예정입니다.
          */
         private val KEY_PAIR: KeyPair = Keys.keyPairFor(SignatureAlgorithm.RS256)
 

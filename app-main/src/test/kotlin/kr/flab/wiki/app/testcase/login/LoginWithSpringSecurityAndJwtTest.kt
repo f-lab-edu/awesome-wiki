@@ -1,7 +1,6 @@
 package kr.flab.wiki.app.testcase.login
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.javafaker.Faker
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.*
@@ -24,6 +23,7 @@ import kr.flab.wiki.core.testlib.user.Users
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.mock.mockito.MockBean
+import javax.inject.Inject
 
 @Tag(TAG_TEST_E2E)
 @DisplayName("스프링 시큐리티와 JWT를 사용한 로그인 시나리오를 확인한다.")
@@ -53,6 +53,7 @@ class LoginWithSpringSecurityAndJwtTest {
      */
 
     private val faker = Faker.instance()
+    @Inject
     private lateinit var objectMapper: ObjectMapper
 
     @MockBean
@@ -69,7 +70,6 @@ class LoginWithSpringSecurityAndJwtTest {
     @BeforeEach
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        this.objectMapper = jacksonObjectMapper()
         /**
          * 다음 코드는 rest assured 에서 log 범위를 설정합니다.
          */

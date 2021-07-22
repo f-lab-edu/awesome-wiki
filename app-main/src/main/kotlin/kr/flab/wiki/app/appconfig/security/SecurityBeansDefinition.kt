@@ -1,5 +1,7 @@
 package kr.flab.wiki.app.appconfig.security
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kr.flab.wiki.app.components.authentication.AuthenticationProviderImpl
 import kr.flab.wiki.app.components.authentication.UserAuthentication
 import org.springframework.context.annotation.Bean
@@ -14,6 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder
  */
 @Configuration
 class SecurityBeansDefinition {
+
+    @Bean
+    fun objectMapper() : ObjectMapper {
+        return jacksonObjectMapper()
+    }
 
     @Bean
     fun authenticationProvider(
