@@ -1,5 +1,6 @@
 package kr.flab.wiki.core.domain.document.impl
 
+import kr.flab.wiki.core.common.exception.document.DocumentConflictException
 import kr.flab.wiki.core.common.exception.document.InvalidBodyException
 import kr.flab.wiki.core.common.exception.document.InvalidTitleException
 import kr.flab.wiki.core.domain.document.Document
@@ -16,7 +17,7 @@ internal class DocumentServiceImpl(
 ) : DocumentService {
     private val validator = DocumentValidator(docsPolicy)
 
-
+    @Throws(DocumentConflictException::class)
     override fun saveDocument(title: String, body: String, creator: User, version: Long): Document {
         if (!this.validator.isTitleValid(title)) {
             throw InvalidTitleException("Cannot create document with title '$title'")
@@ -28,6 +29,9 @@ internal class DocumentServiceImpl(
 
         val document = docsRepo.findByTitle(title).let {
             val now = utcNow()
+            if (it != null && it.version != version) {
+                throw DocumentConflictException()
+            }
             return@let DocumentEntity(
                 title = title,
                 body = body,
