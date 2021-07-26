@@ -10,8 +10,8 @@ class AuthenticationProviderImpl(
 ) : AuthenticationProvider {
     override fun authenticate(authentication: Authentication?): Authentication {
         val user: User = userAuthentication.authenticateUser(
-            authentication?.name.toString(),
-            authentication?.credentials.toString()
+            authentication?.name?.toString() ?: "",
+            authentication?.credentials?.toString() ?: ""
         ) ?: return UsernamePasswordAuthenticationToken(null, null)
 
         return UsernamePasswordAuthenticationToken(user.emailAddress, null)

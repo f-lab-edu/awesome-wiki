@@ -21,11 +21,6 @@ import org.springframework.security.config.http.SessionCreationPolicy
 class WebSecurityConfig(
     private val authenticationProvider: AuthenticationProvider
 ) : WebSecurityConfigurerAdapter() {
-    @Bean
-    override fun authenticationManagerBean(): AuthenticationManager {
-        return super.authenticationManagerBean()
-    }
-
     /**
      * 스프링에서 기본 제공해주는 UserDetailsService 와 UserDetails 를 사용하지 않았습니다.
      * UserDetailsService 의 loadByUserName 은 username 만 받도록 설계되어 있는데,

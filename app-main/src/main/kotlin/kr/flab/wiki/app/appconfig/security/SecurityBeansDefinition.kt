@@ -6,6 +6,7 @@ import kr.flab.wiki.app.components.authentication.AuthenticationProviderImpl
 import kr.flab.wiki.app.components.authentication.UserAuthentication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -32,5 +33,10 @@ class SecurityBeansDefinition {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
+    }
+
+    @Bean
+    fun authenticationManager(webSecurityConfig: WebSecurityConfig): AuthenticationManager {
+        return webSecurityConfig.authenticationManagerBean()
     }
 }
