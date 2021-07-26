@@ -18,6 +18,6 @@ class SaveDocument(private val documentService: DocumentService) {
     @PostMapping
     fun onRequest(@RequestBody document: Document): Document {
         val user = User.newInstance("user", "email", LocalDateTime.now(), LocalDateTime.now())
-        return documentService.saveDocument(document.title, document.body, user)
+        return documentService.saveDocument(document.title, document.body, user, document.version)
     }
 }
