@@ -21,7 +21,7 @@ interface UserRepository {
     fun save(user: User): User
 
     fun findUserByEmailAndPassword(email: String, password: String): User?
-
+  
     companion object {
         fun newInstance(): UserRepository {
             return UserRepositoryImpl()

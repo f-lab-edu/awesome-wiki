@@ -4,7 +4,7 @@ import kr.flab.wiki.core.domain.user.User
 import kr.flab.wiki.core.domain.user.usecases.UserLoginUseCase
 import kr.flab.wiki.core.domain.user.repository.UserRepository
 
-class UserLoginUseCaseImpl(
+internal class UserLoginUseCaseImpl(
     private val userRepository: UserRepository
 ) : UserLoginUseCase {
     override fun login(email: String, password: String): User? {

@@ -29,6 +29,7 @@ dependencies {
     // Spring boot
     implementation "org.springframework.boot:spring-boot-starter:$version_springBoot"
     implementation "org.springframework.boot:spring-boot-starter-web:$version_springBoot"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc:$version_springBoot"
 
     // Spring Security
     implementation "org.springframework.boot:spring-boot-starter-security:$version_springSecurity"
@@ -49,6 +50,7 @@ dependencies {
 
     testImplementation project(path: ":app-core", configuration: "testArtifacts")
     testImplementation project(path: ":app-lib", configuration: "testArtifacts")
+    runtimeOnly 'mysql:mysql-connector-java'
 }
 
 dependencyManagement {
