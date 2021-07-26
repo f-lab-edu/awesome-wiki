@@ -15,7 +15,7 @@ interface DocumentService {
 
     fun findDocumentsByTitle(
         title: String
-    ): MutableList<Document>
+    ): List<Document>
 
     fun getDocumentByTitle(
         title: String
