@@ -31,6 +31,17 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:$version_springBoot"
     implementation "org.springframework.boot:spring-boot-starter-jdbc:$version_springBoot"
 
+    // Spring Security
+    implementation "org.springframework.boot:spring-boot-starter-security:$version_springSecurity"
+    // Spring boot test
+    testImplementation "org.springframework.boot:spring-boot-starter-test:$version_springBootTest"
+    // jjwt (JSON WEB TOKEN)
+    implementation "io.jsonwebtoken:jjwt-impl:$version_jjwt"
+    implementation "io.jsonwebtoken:jjwt-api:$version_jjwt"
+    implementation "io.jsonwebtoken:jjwt-jackson:$version_jjwt"
+
+
+
     // Jackson Kotlin support
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$version_jackson_kotlin"
 
