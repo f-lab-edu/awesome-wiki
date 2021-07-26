@@ -2,6 +2,7 @@ package kr.flab.wiki.core.testcase.document
 
 import com.github.javafaker.Faker
 import kr.flab.wiki.TAG_TEST_UNIT
+import kr.flab.wiki.core.common.exception.document.DocumentConflictException
 import kr.flab.wiki.core.common.exception.document.DocumentNotFoundException
 import kr.flab.wiki.core.common.exception.document.InvalidBodyException
 import kr.flab.wiki.core.common.exception.document.InvalidTitleException
@@ -100,7 +101,8 @@ class DocumentServiceTest {
         @Nested
         inner class 있다면 {
             private val previousDocument = Documents.randomDocument(title = title, version = 1)
-            private lateinit var savedDocument: Document
+            private var savedDocument: Document? = null
+
             @BeforeEach
             fun setupWhen(){
                 // when:
@@ -112,7 +114,7 @@ class DocumentServiceTest {
                 // then:
                 savedDocument = sut.saveDocument(title, body, creator, version)
 
-                assertThat(savedDocument.version, `is`(not(1)))
+                assertThat(savedDocument?.version, `is`(not(1)))
 
             }
             @Test
@@ -121,24 +123,37 @@ class DocumentServiceTest {
 
                 //then:
                 savedDocument = sut.saveDocument(title, body, otherCreator, version)
-                assertThat(savedDocument.lastContributor, `is`(otherCreator))
+                assertThat(savedDocument?.lastContributor, `is`(otherCreator))
 
-                assertThat(savedDocument.version, `is`(not(1)))
+                assertThat(savedDocument?.version, `is`(not(1)))
 
             }
             @Test
             fun `기존 내용을 수정하고 버전이 1 증가한다`(){
                 savedDocument = sut.saveDocument(title, body, creator,version)
-                assertThat(savedDocument.version, `is`(2))
+                assertThat(savedDocument?.version, `is`(2))
             }
-            /*@Test
-            fun `버전이 다를 경우 최신 버전의 문서를 리턴한다`(){
-                `when`(docsRepo.findByTitle(title))
-            }*/
+            @Test
+            fun `버전이 다를 경우 DocumentConflictException 발생`(){
+                val updatedDoc = DocumentEntity(
+                    previousDocument.title,
+                    previousDocument.body,
+                    previousDocument.lastContributor,
+                    previousDocument.updatedAt,
+                    previousDocument.version+1)
+                `when`(docsRepo.save(updatedDoc)).thenReturn(previousDocument)
+                assertThrows(DocumentConflictException::class.java){
+                    savedDocument = sut.saveDocument(title, body, creator, updatedDoc.version)
+                    assertThat(savedDocument?.version, `is`(2))
+                }
+
+            }
             @AfterEach
             fun afterEach(){
-                assertThat(savedDocument.title, `is`(title))
-                assertThat(savedDocument.title, `is`(previousDocument.title))
+                if(savedDocument != null) {
+                    assertThat(savedDocument?.title, `is`(title))
+                    assertThat(savedDocument?.title, `is`(previousDocument.title))
+                }
             }
         }
 
