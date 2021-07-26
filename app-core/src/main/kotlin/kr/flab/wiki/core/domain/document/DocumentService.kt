@@ -11,6 +11,7 @@ interface DocumentService {
         title: String,
         body: String,
         creator: User,
+        version: Long
     ): Document
 
     fun findDocumentsByTitle(

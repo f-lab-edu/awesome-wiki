@@ -16,7 +16,8 @@ internal class DocumentServiceImpl(
 ) : DocumentService {
     private val validator = DocumentValidator(docsPolicy)
 
-    override fun saveDocument(title: String, body: String, creator: User): Document {
+
+    override fun saveDocument(title: String, body: String, creator: User, version: Long): Document {
         if (!this.validator.isTitleValid(title)) {
             throw InvalidTitleException("Cannot create document with title '$title'")
         }

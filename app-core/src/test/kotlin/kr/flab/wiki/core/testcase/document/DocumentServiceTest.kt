@@ -33,6 +33,7 @@ class DocumentServiceTest {
 
     private lateinit var sut: DocumentService
 
+    private val version : Long = 1
     @BeforeEach
     fun setup() {
         MockitoAnnotations.openMocks(this)
@@ -44,14 +45,13 @@ class DocumentServiceTest {
         // given:
         private val body = faker.lorem().paragraph()
         private val creator = Users.randomUser()
-
         @Test
         fun `없으면 문서를 작성할 수 없다`() {
             // and:
             val title = ""
 
             // expect:
-            assertThrows(InvalidTitleException::class.java) { sut.saveDocument(title, body, creator) }
+            assertThrows(InvalidTitleException::class.java) { sut.saveDocument(title, body, creator, version) }
         }
 
         @Test
@@ -62,7 +62,7 @@ class DocumentServiceTest {
             )
 
             // expect:
-            assertThrows(InvalidTitleException::class.java) { sut.saveDocument(title, body, creator) }
+            assertThrows(InvalidTitleException::class.java) { sut.saveDocument(title, body, creator, version) }
         }
     }
 
@@ -79,7 +79,7 @@ class DocumentServiceTest {
             )
 
             // expect:
-            assertThrows(InvalidBodyException::class.java) { sut.saveDocument(title, body, creator) }
+            assertThrows(InvalidBodyException::class.java) { sut.saveDocument(title, body, creator, version) }
         }
     }
 
@@ -92,7 +92,9 @@ class DocumentServiceTest {
 
         @BeforeEach
         fun setupWhen() {
+
             `when`(docsRepo.save(any())).thenAnswer { it.arguments[0] as DocumentEntity }
+
         }
 
         @Nested
@@ -103,11 +105,12 @@ class DocumentServiceTest {
             fun setupWhen(){
                 // when:
                 `when`(docsRepo.findByTitle(title)).thenReturn(previousDocument)
+
             }
             @Test
             fun `기존 내용을 수정할 수 있다`(){
                 // then:
-                savedDocument = sut.saveDocument(title, body, creator)
+                savedDocument = sut.saveDocument(title, body, creator, version)
 
                 assertThat(savedDocument.version, `is`(not(1)))
 
@@ -117,7 +120,7 @@ class DocumentServiceTest {
                 val otherCreator = Users.randomUser()
 
                 //then:
-                savedDocument = sut.saveDocument(title, body, otherCreator)
+                savedDocument = sut.saveDocument(title, body, otherCreator, version)
                 assertThat(savedDocument.lastContributor, `is`(otherCreator))
 
                 assertThat(savedDocument.version, `is`(not(1)))
@@ -125,9 +128,13 @@ class DocumentServiceTest {
             }
             @Test
             fun `기존 내용을 수정하고 버전이 1 증가한다`(){
-                savedDocument = sut.saveDocument(title, body, creator)
+                savedDocument = sut.saveDocument(title, body, creator,version)
                 assertThat(savedDocument.version, `is`(2))
             }
+            /*@Test
+            fun `버전이 다를 경우 최신 버전의 문서를 리턴한다`(){
+                `when`(docsRepo.findByTitle(title))
+            }*/
             @AfterEach
             fun afterEach(){
                 assertThat(savedDocument.title, `is`(title))
@@ -141,7 +148,7 @@ class DocumentServiceTest {
             `when`(docsRepo.findByTitle(title)).thenReturn(null)
 
             // then:
-            val savedDocument = sut.saveDocument(title, body, creator)
+            val savedDocument = sut.saveDocument(title, body, creator, version)
 
             // expect:
             assertThat(savedDocument.version, `is`(1))
