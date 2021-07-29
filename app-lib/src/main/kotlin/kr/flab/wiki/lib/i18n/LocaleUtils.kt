@@ -1,3 +1,10 @@
+@file:Suppress(
+    "SpacingAroundColon",
+    "NoMultipleSpaces",
+    "SpacingAroundComma",
+    "NoWildcardImports",
+    "SpacingAroundParens",
+    "NoMultipleSpaces")
 package kr.flab.wiki.lib.i18n
 
 import java.util.Locale

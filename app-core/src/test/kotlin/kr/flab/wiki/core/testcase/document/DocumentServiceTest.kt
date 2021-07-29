@@ -110,6 +110,7 @@ class DocumentServiceTest {
                 savedDocument = sut.saveDocument(title, body, creator)
 
                 assertThat(savedDocument.version, `is`(not(1)))
+                // then:
 
             }
             @Test
