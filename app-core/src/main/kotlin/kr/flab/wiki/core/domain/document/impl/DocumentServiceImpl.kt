@@ -29,9 +29,7 @@ internal class DocumentServiceImpl(
 
         val document = docsRepo.findByTitle(title).let {
             val now = utcNow()
-            if (it != null && it.version != version) {
-                throw DocumentConflictException()
-            }
+
             return@let DocumentEntity(
                 title = title,
                 body = body,
