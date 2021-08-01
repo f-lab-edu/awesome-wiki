@@ -3,6 +3,7 @@ package kr.flab.wiki.app.appconfig.security
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kr.flab.wiki.app.components.authentication.AuthenticationProviderImpl
+import kr.flab.wiki.app.components.authentication.JwsAuthenticationFilter
 import kr.flab.wiki.app.components.authentication.UserAuthentication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -19,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class SecurityBeansDefinition {
 
     @Bean
-    fun objectMapper() : ObjectMapper {
+    fun objectMapper(): ObjectMapper {
         return jacksonObjectMapper()
     }
 
@@ -38,5 +39,10 @@ class SecurityBeansDefinition {
     @Bean
     fun authenticationManager(webSecurityConfig: WebSecurityConfig): AuthenticationManager {
         return webSecurityConfig.authenticationManagerBean()
+    }
+
+    @Bean
+    fun jwsAuthenticationFilter(): JwsAuthenticationFilter {
+        return JwsAuthenticationFilter()
     }
 }
