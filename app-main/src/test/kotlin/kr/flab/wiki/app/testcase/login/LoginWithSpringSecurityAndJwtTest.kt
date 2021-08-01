@@ -18,6 +18,8 @@ import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import io.restassured.specification.RequestSpecification
 import kr.flab.wiki.TAG_TEST_E2E
+import kr.flab.wiki.app.api.user.request.LoginRequest
+import kr.flab.wiki.app.components.authentication.LoginUserService
 import kr.flab.wiki.app.components.authentication.UserAuthentication
 import kr.flab.wiki.core.testlib.user.Users
 import org.mockito.MockitoAnnotations
@@ -48,13 +50,17 @@ class LoginWithSpringSecurityAndJwtTest {
      * 로그인 이후
      * 1. 발행한 JWT 토큰을 매 요청마다 검증한다. (스프링 시큐리티에서 인증이 필요하다고 정한 요청에만)
      * 2. JWT 가 유효하면 정상적으로 요청을 수행하도록 한다.
-     * 3. JWT 가 유효하지 않으면 Http 403을 반환한다.
+     * 3. JWT 가 유효하지 않으면 Http 401을 반환한다.
      *
      */
 
     private val faker = Faker.instance()
+
     @Inject
     private lateinit var objectMapper: ObjectMapper
+
+    @Inject
+    private lateinit var loginUserService: LoginUserService
 
     @MockBean
     private lateinit var userAuthentication: UserAuthentication
@@ -169,19 +175,50 @@ class LoginWithSpringSecurityAndJwtTest {
         }
     }
 
-    @Disabled
+
     @Nested
     inner class `인증이 필요한 API 는` {
 
+        //테스트할 타겟 api uri
+        //private val targetApiUri = springApi.getRandomAuthenticatedApiPattern()
+        private val targetApiUri = "/test"
+
         @Nested
-        inner class `매 요청마다 토큰을 검증해서` {
+        inner class `매 요청마다 헤더의 토큰을 확인해서` {
+
+            private lateinit var email: String
+            private lateinit var password: String
+
+            @BeforeEach
+            fun setup() {
+                email = faker.internet().emailAddress()
+                password = faker.internet().password()
+            }
 
             @Nested
             inner class 유효하면 {
 
+                @BeforeEach
+                fun setup() {
+                    `when`(userAuthentication.authenticateUser(email, password))
+                        .thenReturn(Users.randomUser(emailAddress = email))
+                }
+
                 @Test
                 fun `API 를 정상수행한다`() {
+                    //정상적으로 로그인한 정보
+                    val loginResponse = loginUserService.login(LoginRequest(email, password))
 
+                    Given {
+                        spec(requestSpecification)
+                        //정상적으로 로그인한 정보에서 추출한 token을 헤더에 담아서 요청한다.
+                        header("Authorization", "Bearer ${loginResponse?.token}")
+                    } When {
+                        get(targetApiUri)
+                    } Then {
+                        statusCode(200)
+                        log().all()
+                    }
                 }
 
             }
@@ -190,8 +227,15 @@ class LoginWithSpringSecurityAndJwtTest {
             inner class `유효하지 않으면` {
 
                 @Test
-                fun `403을 반환한다`() {
-
+                fun `401을 반환한다`() {
+                    Given {
+                        spec(requestSpecification)
+                    } When {
+                        get(targetApiUri)
+                    } Then {
+                        statusCode(401)
+                        log().all()
+                    }
                 }
 
             }

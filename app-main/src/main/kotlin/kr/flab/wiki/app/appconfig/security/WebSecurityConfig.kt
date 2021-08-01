@@ -1,15 +1,16 @@
 package kr.flab.wiki.app.appconfig.security
 
-import org.springframework.context.annotation.Bean
+import kr.flab.wiki.app.components.authentication.JwsAuthenticationFilter
+import kr.flab.wiki.app.components.authentication.UnauthorizedEntryPoint
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 /**
  * 스프링 시큐리티의 설정을 담은 클래스입니다.
@@ -19,7 +20,9 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig(
-    private val authenticationProvider: AuthenticationProvider
+    private val authenticationProvider: AuthenticationProvider,
+    private val jwsAuthenticationFilter: JwsAuthenticationFilter,
+    private val unauthorizedEntryPoint: UnauthorizedEntryPoint
 ) : WebSecurityConfigurerAdapter() {
     /**
      * 스프링에서 기본 제공해주는 UserDetailsService 와 UserDetails 를 사용하지 않았습니다.
@@ -48,11 +51,18 @@ class WebSecurityConfig(
          */
         http.csrf()
             .disable()
+            .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint)
+            .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
             .antMatchers(HttpMethod.POST, "/login").permitAll()
             .anyRequest().authenticated()
+
+        http.addFilterBefore(
+            jwsAuthenticationFilter,
+            UsernamePasswordAuthenticationFilter::class.java
+        )
     }
 }
