@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class SecurityBeansDefinition {
 
     @Bean
-    fun objectMapper() : ObjectMapper {
+    fun objectMapper(): ObjectMapper {
         return jacksonObjectMapper()
     }
 
