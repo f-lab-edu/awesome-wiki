@@ -49,6 +49,15 @@ class MySqlUserRepository(
         return user
     }
 
+    override fun findUserByEmailAndPassword(email: String, password: String): User? {
+        return jdbcTemplate.queryForObject(
+            "SELECT * FROM ${User.name} WHERE $emailAddress = ? AND $password = ?",
+            mapper,
+            email,
+            password
+        )
+    }
+
     companion object {
         val userName = User::userName::name.get()
         val emailAddress = User::emailAddress::name.get()
