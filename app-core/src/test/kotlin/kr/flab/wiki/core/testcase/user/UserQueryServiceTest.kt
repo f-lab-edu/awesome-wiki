@@ -20,6 +20,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import javax.inject.Inject
 
 @Tag(TAG_TEST_UNIT)
 @DisplayName("UserService 의 동작 시나리오를 확인한다.")
@@ -29,7 +30,6 @@ class UserQueryServiceTest {
 
     @Mock
     private lateinit var userRepo: UserRepository
-
     private lateinit var userQueryService: UserQueryService
     private lateinit var userRegisterService: UserRegisterService
 
@@ -37,6 +37,7 @@ class UserQueryServiceTest {
     fun setup() {
         MockitoAnnotations.openMocks(this)
         this.userQueryService = UserQueryService.newInstance(userRepo)
+        this.userRegisterService = UserRegisterService.newInstance(userRepo)
     }
 
     @Nested
