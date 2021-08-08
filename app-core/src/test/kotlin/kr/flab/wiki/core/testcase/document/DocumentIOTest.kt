@@ -8,7 +8,8 @@ import kr.flab.wiki.core.common.exception.document.InvalidBodyException
 import kr.flab.wiki.core.common.exception.document.InvalidTitleException
 import kr.flab.wiki.core.domain.document.Document
 import kr.flab.wiki.core.domain.document.DocumentFormatPolicy
-import kr.flab.wiki.core.domain.document.DocumentService
+import kr.flab.wiki.core.domain.document.DocumentQueryService
+import kr.flab.wiki.core.domain.document.DocumentSaveService
 import kr.flab.wiki.core.domain.document.persistence.DocumentEntity
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 import kr.flab.wiki.core.testlib.document.Documents
@@ -26,19 +27,20 @@ import org.mockito.kotlin.any
 @Tag(TAG_TEST_UNIT)
 @DisplayName("DocumentService 의 동작 시나리오를 확인한다.")
 @Suppress("ClassName", "NonAsciiCharacters") // 테스트 표현을 위한 한글 사용
-class DocumentServiceTest {
+class SaveDocumentServiceTest {
     private val faker = Faker.instance()
 
     @Mock
     private lateinit var docsRepo: DocumentRepository
 
-    private lateinit var sut: DocumentService
-
+    private lateinit var documentSaveService: DocumentSaveService
+    private lateinit var documentQueryService: DocumentQueryService
     private val version : Long = 1
     @BeforeEach
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        this.sut = DocumentService.newInstance(docsRepo)
+        this.documentSaveService = DocumentSaveService.newInstance(docsRepo)
+        this.documentQueryService = DocumentQueryService.newInstance(docsRepo)
     }
 
     @Nested
@@ -52,7 +54,7 @@ class DocumentServiceTest {
             val title = ""
 
             // expect:
-            assertThrows(InvalidTitleException::class.java) { sut.saveDocument(title, body, creator, version) }
+            assertThrows(InvalidTitleException::class.java) { documentSaveService.saveDocument(title, body, creator, version) }
         }
 
         @Test
@@ -63,7 +65,7 @@ class DocumentServiceTest {
             )
 
             // expect:
-            assertThrows(InvalidTitleException::class.java) { sut.saveDocument(title, body, creator, version) }
+            assertThrows(InvalidTitleException::class.java) { documentSaveService.saveDocument(title, body, creator, version) }
         }
     }
 
@@ -80,7 +82,7 @@ class DocumentServiceTest {
             )
 
             // expect:
-            assertThrows(InvalidBodyException::class.java) { sut.saveDocument(title, body, creator, version) }
+            assertThrows(InvalidBodyException::class.java) { documentSaveService.saveDocument(title, body, creator, version) }
         }
     }
 
@@ -112,7 +114,7 @@ class DocumentServiceTest {
             @Test
             fun `기존 내용을 수정할 수 있다`(){
                 // then:
-                savedDocument = sut.saveDocument(title, body, creator, version)
+                savedDocument = documentSaveService.saveDocument(title, body, creator, version)
 
                 assertThat(savedDocument?.version, `is`(not(1)))
 
@@ -122,7 +124,7 @@ class DocumentServiceTest {
                 val otherCreator = Users.randomUser()
 
                 //then:
-                savedDocument = sut.saveDocument(title, body, otherCreator, version)
+                savedDocument = documentSaveService.saveDocument(title, body, otherCreator, version)
                 assertThat(savedDocument?.lastContributor, `is`(otherCreator))
 
                 assertThat(savedDocument?.version, `is`(not(1)))
@@ -130,7 +132,7 @@ class DocumentServiceTest {
             }
             @Test
             fun `기존 내용을 수정하고 버전이 1 증가한다`(){
-                savedDocument = sut.saveDocument(title, body, creator,version)
+                savedDocument = documentSaveService.saveDocument(title, body, creator,version)
                 assertThat(savedDocument?.version, `is`(2))
             }
             @Test
@@ -143,7 +145,7 @@ class DocumentServiceTest {
                     previousDocument.version+1)
                 `when`(docsRepo.save(updatedDoc)).thenReturn(previousDocument)
                 assertThrows(DocumentConflictException::class.java){
-                    savedDocument = sut.saveDocument(title, body, creator, updatedDoc.version)
+                    savedDocument = documentSaveService.saveDocument(title, body, creator, updatedDoc.version)
                     assertThat(savedDocument?.version, `is`(2))
                 }
 
@@ -163,7 +165,7 @@ class DocumentServiceTest {
             `when`(docsRepo.findByTitle(title)).thenReturn(null)
 
             // then:
-            val savedDocument = sut.saveDocument(title, body, creator, version)
+            val savedDocument = documentSaveService.saveDocument(title, body, creator, version)
 
             // expect:
             assertThat(savedDocument.version, `is`(1))
@@ -192,7 +194,7 @@ class DocumentServiceTest {
                 )
 
                 // then:
-                val documents = sut.findDocumentsByTitle(inputTitle)
+                val documents = documentQueryService.findDocumentsByTitle(inputTitle)
 
                 // expect:
                 assertThat(documents.all { document -> document.title.contains(inputTitle) }, `is`(true))
@@ -206,7 +208,7 @@ class DocumentServiceTest {
                 `when`(docsRepo.findAllByTitle(inputTitle)).thenReturn(mutableListOf())
 
                 // then:
-                val documents = sut.findDocumentsByTitle(inputTitle)
+                val documents = documentQueryService.findDocumentsByTitle(inputTitle)
 
                 // expect:
                 assertThat(documents.isEmpty(), `is`(true))
@@ -233,7 +235,7 @@ class DocumentServiceTest {
                 `when`(docsRepo.getByTitle(chosenTitle)).thenReturn(Documents.randomDocument(title = chosenTitle))
 
                 // then:
-                val document = sut.getDocumentByTitle(chosenTitle)
+                val document = documentQueryService.getDocumentByTitle(chosenTitle)
 
                 // expect:
                 assertThat(document.title, `is`(chosenTitle))
@@ -252,7 +254,7 @@ class DocumentServiceTest {
                 `when`(docsRepo.getByTitle(chosenTitle)).thenThrow(DocumentNotFoundException())
 
                 // expect:
-                assertThrows(DocumentNotFoundException::class.java) { sut.getDocumentByTitle(chosenTitle) }
+                assertThrows(DocumentNotFoundException::class.java) { documentQueryService.getDocumentByTitle(chosenTitle) }
 
             }
 
