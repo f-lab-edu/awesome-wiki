@@ -9,7 +9,6 @@ import kr.flab.wiki.core.domain.user.UserRegisterService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import javax.inject.Inject
 
 @Configuration
 class BeanDefinition {
@@ -22,7 +21,7 @@ class BeanDefinition {
     @Bean
     fun userRegisterService(
         @Autowired userRepository: MySqlUserRepository
-    ) : UserRegisterService{
+    ): UserRegisterService {
         return UserRegisterService.newInstance(userRepository)
     }
     @Bean
@@ -38,5 +37,4 @@ class BeanDefinition {
     ): DocumentSaveService {
         return DocumentSaveService.newInstance(documentRepository)
     }
-
 }
