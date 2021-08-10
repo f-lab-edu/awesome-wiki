@@ -19,7 +19,6 @@ class JwtUtils private constructor() {
          * 추후에는 미리 생성한 후 설정파일(ex : application-*.yml)에서 읽어들일 예정입니다.
          */
         private val KEY_PAIR: KeyPair = Keys.keyPairFor(SignatureAlgorithm.RS256)
-        private const val BEARER_LENGTH: Int = 7
 
         fun generateJws(authentication: Authentication): String {
             val email = authentication.name
@@ -73,7 +72,7 @@ class JwtUtils private constructor() {
 
         fun parseJws(token: String): String? {
             if (StringUtils.hasText(token) and token.startsWith("Bearer ")) {
-                return token.substring(BEARER_LENGTH, token.length)
+                return token.split(' ')[1]
             }
             return null
         }

@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.javafaker.Faker
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import io.restassured.builder.RequestSpecBuilder
 import io.restassured.config.LogConfig
 import io.restassured.config.RestAssuredConfig
@@ -30,7 +28,6 @@ import javax.inject.Inject
 @Tag(TAG_TEST_E2E)
 @DisplayName("스프링 시큐리티와 JWT를 사용한 로그인 시나리오를 확인한다.")
 @Suppress("ClassName", "NonAsciiCharacters") // 테스트 표현을 위한 한글 사용
-@ExtendWith(SpringExtension::class)
 @SpringBootTest(
     properties = ["baseUri=http://localhost", "port=8080"],
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
@@ -156,7 +153,7 @@ class LoginWithSpringSecurityAndJwtTest {
                 }
 
                 @Test
-                fun `400 을 반환한다`() {
+                fun `오류가 발생한다 (HTTP 400)`() {
 
                     Given {
                         spec(requestSpecification)
@@ -227,7 +224,7 @@ class LoginWithSpringSecurityAndJwtTest {
             inner class `유효하지 않으면` {
 
                 @Test
-                fun `401을 반환한다`() {
+                fun `오류가 발생한다 (HTTP 403)`() {
                     Given {
                         spec(requestSpecification)
                     } When {
