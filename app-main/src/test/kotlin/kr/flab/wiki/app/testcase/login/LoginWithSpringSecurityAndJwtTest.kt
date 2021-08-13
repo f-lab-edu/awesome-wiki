@@ -16,9 +16,8 @@ import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import io.restassured.specification.RequestSpecification
 import kr.flab.wiki.TAG_TEST_E2E
-import kr.flab.wiki.app.api.user.request.LoginRequest
-import kr.flab.wiki.app.components.authentication.LoginUserService
 import kr.flab.wiki.app.components.authentication.UserAuthentication
+import kr.flab.wiki.app.testlib.LoginTestHelper
 import kr.flab.wiki.core.testlib.user.Users
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Value
@@ -55,9 +54,6 @@ class LoginWithSpringSecurityAndJwtTest {
 
     @Inject
     private lateinit var objectMapper: ObjectMapper
-
-    @Inject
-    private lateinit var loginUserService: LoginUserService
 
     @MockBean
     private lateinit var userAuthentication: UserAuthentication
@@ -177,7 +173,6 @@ class LoginWithSpringSecurityAndJwtTest {
     inner class `인증이 필요한 API 는` {
 
         //테스트할 타겟 api uri
-        //private val targetApiUri = springApi.getRandomAuthenticatedApiPattern()
         private val targetApiUri = "/test"
 
         @Nested
@@ -204,12 +199,12 @@ class LoginWithSpringSecurityAndJwtTest {
                 @Test
                 fun `API 를 정상수행한다`() {
                     //정상적으로 로그인한 정보
-                    val loginResponse = loginUserService.login(LoginRequest(email, password))
+                    val loginResponse = LoginTestHelper.makeLoginResponse(requestSpecification, email, password)
 
                     Given {
                         spec(requestSpecification)
                         //정상적으로 로그인한 정보에서 추출한 token을 헤더에 담아서 요청한다.
-                        header("Authorization", "Bearer ${loginResponse?.token}")
+                        header("Authorization", "Bearer ${loginResponse.token}")
                     } When {
                         get(targetApiUri)
                     } Then {

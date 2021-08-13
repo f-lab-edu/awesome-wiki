@@ -6,6 +6,7 @@ import kr.flab.wiki.app.components.authentication.LoginUserService
 import kr.flab.wiki.app.type.annotation.ApiHandler
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,28 +24,9 @@ class LoginUserApi(
         return ResponseEntity.ok().body(loginResponse)
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/test")
     fun test(): ResponseEntity<Any> {
-        return ResponseEntity.ok().body("test")
-    }
-
-    @GetMapping("/test1")
-    fun test1(): ResponseEntity<Any> {
-        return ResponseEntity.ok().body("test")
-    }
-
-    @GetMapping("/test2")
-    fun test2(): ResponseEntity<Any> {
-        return ResponseEntity.ok().body("test")
-    }
-
-    @GetMapping("/test3")
-    fun test3(): ResponseEntity<Any> {
-        return ResponseEntity.ok().body("test")
-    }
-
-    @GetMapping("/test4")
-    fun test4(): ResponseEntity<Any> {
         return ResponseEntity.ok().body("test")
     }
 }
