@@ -1,12 +1,12 @@
 package kr.flab.wiki.core.domain.document.impl
 
 import kr.flab.wiki.core.domain.document.DocumentHistory
+import kr.flab.wiki.core.domain.document.Service.DocumentHistoryService
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
-import kr.flab.wiki.core.domain.document.usecases.ShowDocumentHistoryUseCase
 
-class ShowDocumentHistoryUseCaseImpl(
+class DocumentHistoryServiceImpl(
     private val documentRepository: DocumentRepository
-) : ShowDocumentHistoryUseCase {
+) : DocumentHistoryService {
     override fun findDocumentHistory(title: String): MutableList<DocumentHistory> {
         return documentRepository.findAllHistoryByTitle(title)
     }
