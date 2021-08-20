@@ -1,7 +1,7 @@
 package kr.flab.wiki.core.domain.document.impl
 
 import kr.flab.wiki.core.domain.document.DocumentHistory
-import kr.flab.wiki.core.domain.document.Service.DocumentHistoryService
+import kr.flab.wiki.core.domain.document.service.DocumentHistoryService
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 
 class DocumentHistoryServiceImpl(

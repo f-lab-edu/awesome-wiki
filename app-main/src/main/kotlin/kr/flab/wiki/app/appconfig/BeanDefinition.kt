@@ -1,7 +1,7 @@
 package kr.flab.wiki.app.appconfig
 
-import kr.flab.wiki.core.domain.document.DocumentSaveService
-import kr.flab.wiki.core.domain.document.DocumentQueryService
+import kr.flab.wiki.core.domain.document.service.DocumentSaveService
+import kr.flab.wiki.core.domain.document.service.DocumentQueryService
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 import kr.flab.wiki.core.domain.user.UserQueryService
 import kr.flab.wiki.core.domain.user.UserRegisterService

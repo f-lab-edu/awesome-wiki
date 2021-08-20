@@ -1,4 +1,4 @@
-package kr.flab.wiki.core.domain.document.Service
+package kr.flab.wiki.core.domain.document.service
 
 import kr.flab.wiki.core.common.annotation.DomainService
 import kr.flab.wiki.core.domain.document.DocumentHistory
