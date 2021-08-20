@@ -3,6 +3,7 @@ package kr.flab.wiki.core.domain.document.repository
 import kr.flab.wiki.core.common.exception.document.DocumentNotFoundException
 import kr.flab.wiki.core.domain.document.Document
 import kr.flab.wiki.core.domain.document.DocumentHistory
+import kr.flab.wiki.core.domain.user.User
 
 interface DocumentRepository {
     /**
@@ -22,4 +23,8 @@ interface DocumentRepository {
     fun findAllByTitle(title: String): MutableList<Document>
 
     fun findAllHistoryByTitle(title: String): MutableList<DocumentHistory>
+
+    fun findDocumentsByUser(user: User) : List<Document>
+
+
 }
