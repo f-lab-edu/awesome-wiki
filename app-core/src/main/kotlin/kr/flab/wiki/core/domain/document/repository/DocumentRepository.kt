@@ -22,9 +22,7 @@ interface DocumentRepository {
 
     fun findAllByTitle(title: String): MutableList<Document>
 
-    fun findAllHistoryByTitle(title: String): MutableList<DocumentHistory>
+    fun findAllHistoryByTitle(title: String): List<DocumentHistory>
 
-    fun findDocumentsByUser(user: User) : List<Document>
-
-
+    fun findDocumentsByUser(user: User): List<Document>
 }

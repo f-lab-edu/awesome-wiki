@@ -4,6 +4,7 @@ import kr.flab.wiki.core.common.exception.document.DocumentConflictException
 import kr.flab.wiki.core.domain.document.Document
 import kr.flab.wiki.core.domain.document.DocumentHistory
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
+import kr.flab.wiki.core.domain.user.User
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
@@ -20,6 +21,8 @@ class MySqlDocumentRepository(
         val body = Document::body::name.get()
         val updatedAt = Document::updatedAt::name.get()
         val version = Document::version::name.get()
+        // user id fkey 필요
+        val userId = User::emailAddress::name.get()
     }
 
     val mapper = RowMapper { rs: ResultSet, _: Int ->
@@ -71,7 +74,16 @@ class MySqlDocumentRepository(
         return jdbcTemplate.query("SELECT * FROM ${Document.name} WHERE $title = ?", mapper, title)
     }
 
-    override fun findAllHistoryByTitle(title: String): MutableList<DocumentHistory> {
-        TODO("Not yet implemented")
+    override fun findAllHistoryByTitle(title: String): List<DocumentHistory> {
+        return jdbcTemplate
+            .query("SELECT * FROM ${Document.name} WHERE $title = ?", mapper, title)
+            .map {
+                DocumentHistory.newInstance(it.title, it.body, it.lastContributor, it.updatedAt)
+        }
+    }
+
+    override fun findDocumentsByUser(user: User): List<Document> {
+        return jdbcTemplate
+            .query("SELECT * FROM ${Document.name} WHERE $userId = ?", mapper, user.emailAddress)
     }
 }
