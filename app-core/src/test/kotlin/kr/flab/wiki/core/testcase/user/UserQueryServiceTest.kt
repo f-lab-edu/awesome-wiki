@@ -7,7 +7,8 @@ import kr.flab.wiki.core.common.exception.user.UserNameAlreadyExistException
 import kr.flab.wiki.core.common.exception.user.WrongUserEmailException
 import kr.flab.wiki.core.common.exception.user.WrongUserNameException
 import kr.flab.wiki.core.domain.user.UserRegistrationPolicy
-import kr.flab.wiki.core.domain.user.UserService
+import kr.flab.wiki.core.domain.user.UserQueryService
+import kr.flab.wiki.core.domain.user.UserRegisterService
 import kr.flab.wiki.core.domain.user.persistence.UserEntity
 import kr.flab.wiki.core.domain.user.repository.UserRepository
 import kr.flab.wiki.core.testlib.user.Users
@@ -19,22 +20,24 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import javax.inject.Inject
 
 @Tag(TAG_TEST_UNIT)
 @DisplayName("UserService 의 동작 시나리오를 확인한다.")
 @Suppress("ClassName", "NonAsciiCharacters") // 테스트 표현을 위한 한글 사용
-class UserServiceTest {
+class UserQueryServiceTest {
     private val faker = Faker.instance()
 
     @Mock
     private lateinit var userRepo: UserRepository
-
-    private lateinit var sut: UserService
+    private lateinit var userQueryService: UserQueryService
+    private lateinit var userRegisterService: UserRegisterService
 
     @BeforeEach
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        this.sut = UserService.newInstance(userRepo)
+        this.userQueryService = UserQueryService.newInstance(userRepo)
+        this.userRegisterService = UserRegisterService.newInstance(userRepo)
     }
 
     @Nested
@@ -48,7 +51,7 @@ class UserServiceTest {
             val userName = faker.lorem().characters(0, UserRegistrationPolicy.DEFAULT_MINIMUM_USER_NAME_LENGTH)
 
             // expect:
-            assertThrows(WrongUserNameException::class.java) { sut.registerUser(userName, email) }
+            assertThrows(WrongUserNameException::class.java) { userRegisterService.registerUser(userName, email) }
         }
 
         @Test
@@ -59,7 +62,7 @@ class UserServiceTest {
             )
 
             // expect:
-            assertThrows(WrongUserNameException::class.java) { sut.registerUser(userName, email) }
+            assertThrows(WrongUserNameException::class.java) { userRegisterService.registerUser(userName, email) }
         }
     }
 
@@ -77,7 +80,7 @@ class UserServiceTest {
             val email = faker.lorem().characters(0, UserRegistrationPolicy.DEFAULT_MINIMUM_EMAIL_LENGTH)
 
             // expect:
-            assertThrows(WrongUserEmailException::class.java) { sut.registerUser(userName, email) }
+            assertThrows(WrongUserEmailException::class.java) { userRegisterService.registerUser(userName, email) }
         }
 
         @Test
@@ -86,7 +89,7 @@ class UserServiceTest {
             val email = faker.lorem().characters(0, UserRegistrationPolicy.DEFAULT_MINIMUM_EMAIL_LENGTH)
 
             // expect:
-            assertThrows(WrongUserEmailException::class.java) { sut.registerUser(userName, email) }
+            assertThrows(WrongUserEmailException::class.java) { userRegisterService.registerUser(userName, email) }
         }
     }
 
@@ -108,7 +111,7 @@ class UserServiceTest {
             `when`(userRepo.findByUserName(userName)).thenReturn(alreadyExistingUser)
 
             // expect:
-            assertThrows(UserNameAlreadyExistException::class.java) { sut.registerUser(userName, email) }
+            assertThrows(UserNameAlreadyExistException::class.java) { userRegisterService.registerUser(userName, email) }
         }
 
         @Test
@@ -117,7 +120,7 @@ class UserServiceTest {
             `when`(userRepo.findByEmail(email)).thenReturn(alreadyExistingUser)
 
             // expect:
-            assertThrows(UserEmailAlreadyExistException::class.java) { sut.registerUser(userName, email) }
+            assertThrows(UserEmailAlreadyExistException::class.java) { userRegisterService.registerUser(userName, email) }
         }
     }
 
@@ -134,7 +137,7 @@ class UserServiceTest {
         `when`(userRepo.save(any())).thenAnswer { it.arguments[0] as UserEntity }
 
         // then:
-        val createdUser = sut.registerUser(userName, email)
+        val createdUser = userRegisterService.registerUser(userName, email)
 
         // expect:
         assertThat(createdUser.userName, `is`(userName))

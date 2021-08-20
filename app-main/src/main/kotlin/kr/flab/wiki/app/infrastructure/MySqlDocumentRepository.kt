@@ -1,17 +1,19 @@
 package kr.flab.wiki.app.infrastructure
 
+import kr.flab.wiki.core.common.exception.document.DocumentConflictException
 import kr.flab.wiki.core.domain.document.Document
 import kr.flab.wiki.core.domain.document.DocumentHistory
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
+import java.sql.SQLIntegrityConstraintViolationException
+import javax.inject.Inject
 
 @Repository
 class MySqlDocumentRepository(
-    @Autowired private val jdbcTemplate: JdbcTemplate
+    @Inject private val jdbcTemplate: JdbcTemplate
 ) : DocumentRepository {
     companion object {
         val title = Document::title::name.get()
@@ -42,8 +44,9 @@ class MySqlDocumentRepository(
     }
 
     override fun save(document: Document): Document {
-        jdbcTemplate.update(
-            """INSERT INTO ${Document.name} 
+        try {
+            jdbcTemplate.update(
+                """INSERT INTO ${Document.name} 
                     (
                     $title,
                     $body,
@@ -52,12 +55,15 @@ class MySqlDocumentRepository(
                     $version
                     )
                    VALUES (?,?,?,?,?)""",
-            document.title,
-            document.body,
-            document.lastContributor.userName,
-            document.updatedAt,
-            document.version
-        )
+                document.title,
+                document.body,
+                document.lastContributor.userName,
+                document.updatedAt,
+                document.version
+            )
+        } catch (e: SQLIntegrityConstraintViolationException) {
+            throw DocumentConflictException("duplicate exception", e)
+        }
         return document
     }
 

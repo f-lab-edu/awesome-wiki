@@ -6,22 +6,15 @@ import kr.flab.wiki.core.common.exception.user.WrongUserEmailException
 import kr.flab.wiki.core.common.exception.user.WrongUserNameException
 import kr.flab.wiki.core.domain.user.User
 import kr.flab.wiki.core.domain.user.UserRegistrationPolicy
-import kr.flab.wiki.core.domain.user.UserService
+import kr.flab.wiki.core.domain.user.UserRegisterService
 import kr.flab.wiki.core.domain.user.persistence.UserEntity
 import kr.flab.wiki.core.domain.user.repository.UserRepository
 import kr.flab.wiki.lib.time.utcNow
 
-internal class UserServiceImpl(
+internal class UserRegisterServiceImpl(
     private val userRepo: UserRepository,
     private val registrationPolicy: UserRegistrationPolicy,
-) : UserService {
-    override fun isUserNameExist(userName: String): Boolean {
-        return userRepo.findByUserName(userName) != null
-    }
-
-    override fun isUserEmailExist(email: String): Boolean {
-        return userRepo.findByEmail(email) != null
-    }
+) : UserRegisterService {
 
     override fun registerUser(userName: String, emailAddress: String): User {
         with(this.registrationPolicy) {
@@ -34,11 +27,11 @@ internal class UserServiceImpl(
             }
         }
 
-        if (isUserNameExist(userName)) {
+        if (userRepo.findByUserName(userName) != null) {
             throw UserNameAlreadyExistException("User with name '$userName' already exists")
         }
 
-        if (isUserEmailExist(emailAddress)) {
+        if (userRepo.findByEmail(emailAddress) != null) {
             throw UserEmailAlreadyExistException("User with email '$emailAddress' already exists")
         }
 

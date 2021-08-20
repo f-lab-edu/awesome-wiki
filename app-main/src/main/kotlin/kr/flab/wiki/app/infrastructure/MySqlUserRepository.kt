@@ -2,15 +2,15 @@ package kr.flab.wiki.app.infrastructure
 
 import kr.flab.wiki.core.domain.user.User
 import kr.flab.wiki.core.domain.user.repository.UserRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 import org.springframework.jdbc.core.RowMapper
+import javax.inject.Inject
 
 @Repository
 class MySqlUserRepository(
-    @Autowired private val jdbcTemplate: JdbcTemplate
+    @Inject private val jdbcTemplate: JdbcTemplate
 ) : UserRepository {
     /**
      * Maybe operation: 검색 실패를 예외 처리하지 않음

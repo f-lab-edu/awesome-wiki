@@ -2,22 +2,43 @@ package kr.flab.wiki.app.api.document.saveDocument
 
 import kr.flab.wiki.app.api.Path
 import kr.flab.wiki.app.type.annotation.ApiHandler
+import kr.flab.wiki.core.common.exception.document.DocumentConflictException
 import kr.flab.wiki.core.domain.document.Document
-import kr.flab.wiki.core.domain.document.DocumentService
-import kr.flab.wiki.core.domain.user.User
+import kr.flab.wiki.core.domain.document.DocumentPostResult
+import kr.flab.wiki.core.domain.document.DocumentSaveService
+import kr.flab.wiki.core.domain.document.DocumentQueryService
+import kr.flab.wiki.core.domain.document.impl.DocumentPostResultImpl
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.time.LocalDateTime
 
 @RestController
 @RequestMapping(path = [Path.DOCUMENT], produces = ["application/json"])
 @ApiHandler
-class SaveDocument(private val documentService: DocumentService) {
+class SaveDocument(
+    private val documentSaveService: DocumentSaveService,
+    private val documentQueryService: DocumentQueryService
+) {
     @PostMapping
-    fun onRequest(@RequestBody document: Document): Document {
-        val user = User.newInstance("user", "email", LocalDateTime.now(), LocalDateTime.now())
-        return documentService.saveDocument(document.title, document.body, user)
+    fun onRequest(@RequestBody document: Document): DocumentPostResult {
+        var serverDocument = documentQueryService.getDocumentByTitle(document.title)
+        if (serverDocument.version != document.version) {
+            return DocumentPostResultImpl(document, serverDocument)
+        } else {
+            return try {
+                val updatedDocument = documentSaveService.saveDocument(
+                    document.title,
+                    document.body,
+                    document.lastContributor,
+                    document.version
+                )
+                DocumentPostResultImpl(document, updatedDocument)
+            } catch (e: DocumentConflictException) {
+                println(e)
+                serverDocument = documentQueryService.getDocumentByTitle(document.title)
+                DocumentPostResultImpl(document, serverDocument)
+            }
+        }
     }
 }
