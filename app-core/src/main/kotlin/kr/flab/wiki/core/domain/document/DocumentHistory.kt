@@ -1,6 +1,7 @@
 package kr.flab.wiki.core.domain.document
 
 import kr.flab.wiki.core.common.annotation.DomainModel
+import kr.flab.wiki.core.domain.document.persistence.DocumentHistoryEntity
 import kr.flab.wiki.core.domain.user.User
 import java.time.LocalDateTime
 
@@ -26,4 +27,14 @@ interface DocumentHistory {
     val creator: User
 
     val createdAt: LocalDateTime
+    companion object {
+        fun newInstance(
+            title: String,
+            body: String,
+            creator: User,
+            createdAt: LocalDateTime
+        ): DocumentHistory {
+            return DocumentHistoryEntity(title, body, creator, createdAt)
+        }
+    }
 }
