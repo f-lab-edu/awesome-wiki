@@ -7,7 +7,7 @@ import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 class DocumentHistoryServiceImpl(
     private val documentRepository: DocumentRepository
 ) : DocumentHistoryService {
-    override fun findDocumentHistory(title: String): MutableList<DocumentHistory> {
+    override fun findDocumentHistory(title: String): List<DocumentHistory> {
         return documentRepository.findAllHistoryByTitle(title)
     }
 }

@@ -7,7 +7,7 @@ import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 
 @DomainService
 interface DocumentHistoryService {
-    fun findDocumentHistory(title: String): MutableList<DocumentHistory>
+    fun findDocumentHistory(title: String): List<DocumentHistory>
 
     companion object {
         fun newInstance(
