@@ -1,7 +1,7 @@
 package kr.flab.wiki.core.domain.document.impl
 
 import kr.flab.wiki.core.domain.document.Document
-import kr.flab.wiki.core.domain.document.DocumentQueryService
+import kr.flab.wiki.core.domain.document.service.DocumentQueryService
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 
 internal class DocumentQueryServiceImpl(

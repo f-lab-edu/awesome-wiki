@@ -1,6 +1,7 @@
-package kr.flab.wiki.core.domain.document
+package kr.flab.wiki.core.domain.document.service
 
 import kr.flab.wiki.core.common.annotation.DomainService
+import kr.flab.wiki.core.domain.document.Document
 import kr.flab.wiki.core.domain.document.impl.DocumentQueryServiceImpl
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 

@@ -5,7 +5,7 @@ import kr.flab.wiki.core.common.exception.document.InvalidBodyException
 import kr.flab.wiki.core.common.exception.document.InvalidTitleException
 import kr.flab.wiki.core.domain.document.Document
 import kr.flab.wiki.core.domain.document.DocumentFormatPolicy
-import kr.flab.wiki.core.domain.document.DocumentSaveService
+import kr.flab.wiki.core.domain.document.service.DocumentSaveService
 import kr.flab.wiki.core.domain.document.persistence.DocumentEntity
 import kr.flab.wiki.core.domain.document.repository.DocumentRepository
 import kr.flab.wiki.core.domain.user.User

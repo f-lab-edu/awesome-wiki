@@ -5,8 +5,8 @@ import kr.flab.wiki.app.type.annotation.ApiHandler
 import kr.flab.wiki.core.common.exception.document.DocumentConflictException
 import kr.flab.wiki.core.domain.document.Document
 import kr.flab.wiki.core.domain.document.DocumentPostResult
-import kr.flab.wiki.core.domain.document.DocumentSaveService
-import kr.flab.wiki.core.domain.document.DocumentQueryService
+import kr.flab.wiki.core.domain.document.service.DocumentSaveService
+import kr.flab.wiki.core.domain.document.service.DocumentQueryService
 import kr.flab.wiki.core.domain.document.impl.DocumentPostResultImpl
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

@@ -3,7 +3,7 @@ package kr.flab.wiki.app.api.document.getDocumentByTitle
 import kr.flab.wiki.app.api.Path
 import kr.flab.wiki.app.type.annotation.ApiHandler
 import kr.flab.wiki.core.domain.document.Document
-import kr.flab.wiki.core.domain.document.DocumentQueryService
+import kr.flab.wiki.core.domain.document.service.DocumentQueryService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
